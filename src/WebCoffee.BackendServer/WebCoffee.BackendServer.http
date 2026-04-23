@@ -1,0 +1,6 @@
+@WebCoffee.BackendServer_HostAddress = http://localhost:5274
+
+GET {{WebCoffee.BackendServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
