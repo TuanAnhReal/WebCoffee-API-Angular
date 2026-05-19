@@ -14,9 +14,6 @@ namespace WebCoffee.BackendServer.Data
         public DbSet<NhanVien> NhanViens { get; set; }
         public DbSet<PhanQuyen> PhanQuyens { get; set; }
         public DbSet<TaiKhoan> TaiKhoans { get; set; }
-        public DbSet<NhaCungCap> NhaCungCaps { get; set; }
-        public DbSet<PhieuNhap> PhieuNhaps { get; set; }
-        public DbSet<CTPhieuNhap> CTPhieuNhaps { get; set; }
         public DbSet<KhachHang> KhachHangs { get; set; }
         public DbSet<KhuVuc> KhuVucs { get; set; }
         public DbSet<Ban> Bans { get; set; }
@@ -24,11 +21,6 @@ namespace WebCoffee.BackendServer.Data
         public DbSet<CTHD> CTHDs { get; set; }
         public DbSet<KhuyenMai> KhuyenMais { get; set; }
         public DbSet<SanPham_KhuyenMai> SanPham_KhuyenMais { get; set; }
-        public DbSet<NguyenLieu> NguyenLieus { get; set; }
-        public DbSet<CongThuc> CongThucs { get; set; }
-        public DbSet<PhieuNhapNL> PhieuNhapNLs { get; set; }
-        public DbSet<CTPhieuNhapNL> CTPhieuNhapNLs { get; set; }
-        public DbSet<LichSuKho> LichSuKhos { get; set; }
         public DbSet<DatBan> DatBans { get; set; }
         public DbSet<ThanhToan> ThanhToans { get; set; }
 
@@ -53,17 +45,11 @@ namespace WebCoffee.BackendServer.Data
                 .HasForeignKey(h => h.MaNV_PC)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ==========================================
-            // 2. SEED DATA (TẠO DỮ LIỆU MẪU)
-            // ==========================================
-
-            // --- Bảng Cha: PHÂN QUYỀN ---
             modelBuilder.Entity<PhanQuyen>().HasData(
                 new PhanQuyen { MaPQ = "PQ01", TenPQ = "Quản trị viên", MoTaPQ = "Toàn quyền hệ thống" },
                 new PhanQuyen { MaPQ = "PQ02", TenPQ = "Nhân viên", MoTaPQ = "Quyền bán hàng cơ bản" }
             );
 
-            // --- Bảng Cha: LOẠI NHÂN VIÊN ---
             modelBuilder.Entity<LoaiNV>().HasData(
                 new LoaiNV { MaLoaiNV = "LNV01", TenLoaiNV = "Quản lý", HsLoaiNV = 2.0 },
                 new LoaiNV { MaLoaiNV = "LNV02", TenLoaiNV = "Pha chế", HsLoaiNV = 1.2 },
@@ -111,11 +97,6 @@ namespace WebCoffee.BackendServer.Data
                 new Ban { SoBan = "B03", SoKV = "KV02", TenBan = "Bàn 1 Sân Thượng", TrangThaiBan = "Trống" }
             );
 
-            // --- Bảng Cha: NGUYÊN LIỆU ---
-            modelBuilder.Entity<NguyenLieu>().HasData(
-                new NguyenLieu { MaNL = "NL01", TenNL = "Hạt Cà Phê Robusta", DVTNL = "Kg", SoLuongTon = 10m, DonGiaNL = 150000m },
-                new NguyenLieu { MaNL = "NL02", TenNL = "Sữa Đặc", DVTNL = "Lon", SoLuongTon = 20m, DonGiaNL = 25000m }
-            );
         }
     }
 }
