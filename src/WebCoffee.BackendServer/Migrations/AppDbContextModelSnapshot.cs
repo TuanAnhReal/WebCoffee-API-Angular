@@ -558,6 +558,39 @@ namespace WebCoffee.BackendServer.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TenDangNhap")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenDangNhap");
+
+                    b.ToTable("REFRESHTOKEN");
+                });
+
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.SanPham", b =>
                 {
                     b.Property<string>("MaSP")
@@ -814,6 +847,17 @@ namespace WebCoffee.BackendServer.Migrations
                         .IsRequired();
 
                     b.Navigation("LoaiNV");
+                });
+
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("WebCoffee.BackendServer.Data.Entities.TaiKhoan", "TaiKhoan")
+                        .WithMany()
+                        .HasForeignKey("TenDangNhap")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TaiKhoan");
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.SanPham", b =>

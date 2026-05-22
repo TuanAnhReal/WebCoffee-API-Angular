@@ -1,5 +1,4 @@
-﻿using WebCoffee.BackendServer.Data.Entities;
-using WebCoffee.ViewModels.Catalog;
+﻿using WebCoffee.ViewModels.Catalog.SanPhams;
 
 namespace WebCoffee.BackendServer.Services.SanPhams
 {
@@ -7,8 +6,8 @@ namespace WebCoffee.BackendServer.Services.SanPhams
     {
         Task<List<SanPhamVm>> GetAllAsync();
         Task<SanPhamVm> GetByIdAsync(string maSp);
-        Task<string> CreateAsync(SanPhamCreateRequest request);
-        Task<int> UpdateAsync(string maSp, SanPhamUpdateRequest request);
-        Task<int> DeleteAsync(string maSp);
+        Task<SanPhamVm> CreateAsync(SanPhamCreateRequest request);
+        Task<bool> UpdateAsync(string maSp, SanPhamUpdateRequest request);
+        Task<bool> DeleteAsync(string maSp);
     }
 }

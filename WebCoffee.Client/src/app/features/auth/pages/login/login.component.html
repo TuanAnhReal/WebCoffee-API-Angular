@@ -1,0 +1,37 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <mat-card class="w-full max-w-md p-6 shadow-xl rounded-2xl">
+    <mat-card-header class="flex justify-center mb-6">
+      <mat-card-title class="text-3xl font-bold text-gray-800">WebCoffee Admin</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+        
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Tên đăng nhập</mat-label>
+          <input matInput formControlName="tenDangNhap" placeholder="Nhập tên đăng nhập">
+          <mat-icon matSuffix>person</mat-icon>
+          @if (loginForm.get('tenDangNhap')?.hasError('required') && loginForm.get('tenDangNhap')?.touched) {
+            <mat-error>Tên đăng nhập là bắt buộc</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Mật khẩu</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="matKhau">
+          <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          @if (loginForm.get('matKhau')?.hasError('required') && loginForm.get('matKhau')?.touched) {
+            <mat-error>Mật khẩu là bắt buộc</mat-error>
+          }
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit" class="w-full py-2 mt-4 text-lg" [disabled]="loginForm.invalid || isLoading">
+          {{ isLoading ? 'Đang xử lý...' : 'Đăng Nhập' }}
+        </button>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

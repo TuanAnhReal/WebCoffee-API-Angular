@@ -23,6 +23,7 @@ namespace WebCoffee.BackendServer.Data
         public DbSet<SanPham_KhuyenMai> SanPham_KhuyenMais { get; set; }
         public DbSet<DatBan> DatBans { get; set; }
         public DbSet<ThanhToan> ThanhToans { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

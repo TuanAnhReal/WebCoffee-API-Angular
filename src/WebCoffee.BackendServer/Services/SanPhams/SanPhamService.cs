@@ -1,88 +1,69 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WebCoffee.BackendServer.Data;
 using WebCoffee.BackendServer.Data.Entities;
-using WebCoffee.ViewModels.Catalog;
+using WebCoffee.ViewModels.Catalog.SanPhams;
 
 namespace WebCoffee.BackendServer.Services.SanPhams
 {
     public class SanPhamService : ISanPhamService
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public SanPhamService(AppDbContext context)
+        public SanPhamService(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<List<SanPhamVm>> GetAllAsync()
         {
-            return await _context.SanPhams
-                .Select(x => new SanPhamVm()
-                {
-                    MaSP = x.MaSP,
-                    TenSP = x.TenSP,
-                    DonGia = x.DonGia,
-                    HinhAnh = x.HinhAnh ?? "", // Xử lý null vì DTO không cho phép HinhAnh null
-                    TrangThaiSP = x.TrangThaiSP
-                }).ToListAsync();
+            var entities = await _context.SanPhams.Include(x => x.LoaiSP).ToListAsync();
+            return _mapper.Map<List<SanPhamVm>>(entities);
         }
 
         public async Task<SanPhamVm> GetByIdAsync(string maSp)
         {
-            // Tìm theo khóa chính kiểu string
-            var sp = await _context.SanPhams.FindAsync(maSp);
-            if (sp == null) return null;
-
-            return new SanPhamVm()
-            {
-                MaSP = sp.MaSP,
-                TenSP = sp.TenSP,
-                DonGia = sp.DonGia,
-                HinhAnh = sp.HinhAnh ?? "",
-                TrangThaiSP = sp.TrangThaiSP
-            };
+            var entity = await _context.SanPhams.Include(x => x.LoaiSP).FirstOrDefaultAsync(x => x.MaSP == maSp);
+            if (entity == null) return null;
+            return _mapper.Map<SanPhamVm>(entity);
         }
 
-        public async Task<string> CreateAsync(SanPhamCreateRequest request)
+        public async Task<SanPhamVm> CreateAsync(SanPhamCreateRequest request)
         {
-            string newMaSP = "SP" + DateTime.Now.ToString("HHmmss");
+            var entity = _mapper.Map<SanPham>(request);
+            entity.MaSP = "SP" + DateTime.Now.ToString("HHmmss");
+            entity.TrangThaiSP = "Đang bán";
 
-            var sp = new SanPham()
-            {
-                MaSP = newMaSP,
-                TenSP = request.TenSP ?? "Chưa có tên",
-                DonGia = request.DonGia,
-                MaLoaiSP = request.MaLoaiSP ?? "MACDINH",
-                TrangThaiSP = "Đang bán"
-            };
+            _context.SanPhams.Add(entity);
 
-            _context.SanPhams.Add(sp);
             await _context.SaveChangesAsync();
+            await _context.Entry(entity).Reference(x => x.LoaiSP).LoadAsync();
 
-            return sp.MaSP;
+            return _mapper.Map<SanPhamVm>(entity);
         }
 
-        public async Task<int> UpdateAsync(string maSp, SanPhamUpdateRequest request)
+        public async Task<bool> UpdateAsync(string maSp, SanPhamUpdateRequest request)
         {
-            var sp = await _context.SanPhams.FindAsync(maSp);
-            if (sp == null) return 0;
+            var entity = await _context.SanPhams.FirstOrDefaultAsync(x => x.MaSP == maSp);
+            if (entity == null) return false;
 
-            // Cập nhật các trường. Nếu request có null thì giữ nguyên giá trị cũ
-            sp.TenSP = request.TenSP ?? sp.TenSP;
-            sp.DonGia = request.DonGia;
-            sp.TrangThaiSP = request.TrangThaiSP ?? sp.TrangThaiSP;
+            _mapper.Map(request, entity);
+            _context.SanPhams.Update(entity);
 
-            _context.SanPhams.Update(sp);
-            return await _context.SaveChangesAsync(); // Trả về số lượng records bị ảnh hưởng
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
 
-        public async Task<int> DeleteAsync(string maSp)
+        public async Task<bool> DeleteAsync(string maSp)
         {
-            var sp = await _context.SanPhams.FindAsync(maSp);
-            if (sp == null) return 0;
+            var entity = await _context.SanPhams.FirstOrDefaultAsync(x => x.MaSP == maSp);
+            if (entity == null) return false;
 
-            _context.SanPhams.Remove(sp);
-            return await _context.SaveChangesAsync();
+            _context.SanPhams.Remove(entity);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

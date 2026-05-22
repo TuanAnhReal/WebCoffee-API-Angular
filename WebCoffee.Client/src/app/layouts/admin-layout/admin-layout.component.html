@@ -1,0 +1,21 @@
+<div class="flex h-screen bg-neutral-100">
+
+  <!-- Sidebar -->
+  <app-sidebar />
+
+  <!-- Main -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <app-header />
+
+    <!-- Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+
+      <router-outlet />
+
+    </main>
+
+  </div>
+
+</div>

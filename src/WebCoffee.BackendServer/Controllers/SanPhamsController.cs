@@ -1,37 +1,69 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WebCoffee.BackendServer.Models;
-using WebCoffee.ViewModels.Catalog;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WebCoffee.BackendServer.Services.SanPhams;
+using WebCoffee.ViewModels.Catalog.SanPhams;
+using WebCoffee.ViewModels.Common;
 
 namespace WebCoffee.BackendServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SanPhamsController : ControllerBase
     {
-        private readonly SanPhamModel _sanPhamModel;
-        public SanPhamsController(SanPhamModel sanPhamModel)
+        private readonly ISanPhamService _sanPhamService;
+
+        public SanPhamsController(ISanPhamService sanPhamService)
         {
-            _sanPhamModel = sanPhamModel;
+            _sanPhamService = sanPhamService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
-            => await _sanPhamModel.GetAllProductsAsync();
+        {
+            var result = await _sanPhamService.GetAllAsync();
+            return Ok(ApiResponse<List<SanPhamVm>>.SuccessResult(result, "Lấy danh sách sản phẩm thành công"));
+        }
 
         [HttpGet("{maSp}")]
         public async Task<IActionResult> GetById(string maSp)
-            => await _sanPhamModel.GetProductByIdAsync(maSp);
+        {
+            var result = await _sanPhamService.GetByIdAsync(maSp);
+
+            if (result == null)
+                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy sản phẩm này.", 404));
+
+            return Ok(ApiResponse<SanPhamVm>.SuccessResult(result, "Lấy thông tin sản phẩm thành công"));
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SanPhamCreateRequest request)
-            => await _sanPhamModel.CreateProductAsync(request);
+        {
+            var result = await _sanPhamService.CreateAsync(request);
+
+            return Created(string.Empty, ApiResponse<SanPhamVm>.SuccessResult(result, "Thêm sản phẩm thành công", 201));
+        }
 
         [HttpPut("{maSp}")]
         public async Task<IActionResult> Update(string maSp, [FromBody] SanPhamUpdateRequest request)
-            => await _sanPhamModel.UpdateProductAsync(maSp, request);
+        {
+            var isSuccess = await _sanPhamService.UpdateAsync(maSp, request);
+
+            if (!isSuccess)
+                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy sản phẩm để cập nhật.", 404));
+
+            return Ok(ApiResponse<object>.SuccessResult(null, "Cập nhật sản phẩm thành công"));
+        }
 
         [HttpDelete("{maSp}")]
         public async Task<IActionResult> Delete(string maSp)
-            => await _sanPhamModel.DeleteProductAsync(maSp);
+        {
+            var isSuccess = await _sanPhamService.DeleteAsync(maSp);
+
+            if (!isSuccess)
+                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy sản phẩm để xóa.", 404));
+
+            return Ok(ApiResponse<object>.SuccessResult(null, "Xóa sản phẩm thành công"));
+        }
     }
 }
