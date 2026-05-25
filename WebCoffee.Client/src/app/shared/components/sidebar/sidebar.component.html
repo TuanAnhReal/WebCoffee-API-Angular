@@ -1,51 +1,65 @@
-<div class="h-screen w-64 bg-neutral-900 text-white flex flex-col">
-
-  <!-- Logo -->
-  <div class="h-16 flex items-center px-6 border-b border-neutral-800">
-    <h1 class="text-2xl font-bold">
-      WebCoffee
-    </h1>
+<div class="h-full flex flex-col py-gutter">
+  <div class="px-6 mb-8">
+    <h1 class="font-headline-md text-headline-md text-primary font-bold">WebCoffee</h1>
+    <p class="font-body-sm text-body-sm text-on-surface-variant">Admin Portal</p>
   </div>
-
-  <!-- Menu -->
-  <div class="flex-1 py-4">
-
-    <a
-      routerLink="/admin/dashboard"
-      routerLinkActive="bg-neutral-800"
-      class="flex items-center px-6 py-3 hover:bg-neutral-800 transition"
-    >
-      Dashboard
+  
+  <nav class="flex-grow space-y-1">
+    <a routerLink="/admin/dashboard" 
+       routerLinkActive="!bg-primary !text-on-primary" 
+       class="relative flex items-center px-6 py-3 transition-colors text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 active:scale-[0.98]">
+      <span class="material-symbols-outlined mr-3">dashboard</span>
+      <span class="font-body-md text-body-md font-medium">Dashboard</span>
     </a>
 
-    <a
-      routerLink="/admin/san-pham"
-      routerLinkActive="bg-neutral-800"
-      class="flex items-center px-6 py-3 hover:bg-neutral-800 transition"
-    >
-      Sản phẩm
+    <a routerLink="/admin/san-pham" 
+       routerLinkActive="!bg-primary !text-on-primary" 
+       class="flex items-center px-6 py-3 transition-colors text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 active:scale-[0.98]">
+      <span class="material-symbols-outlined mr-3">inventory_2</span>
+      <span class="font-body-md text-body-md font-medium">Sản phẩm</span>
     </a>
 
-    <a
-      routerLink="/admin/hoa-don"
-      routerLinkActive="bg-neutral-800"
-      class="flex items-center px-6 py-3 hover:bg-neutral-800 transition"
-    >
-      Hóa đơn
+    <a routerLink="/admin/khach-hang" 
+       routerLinkActive="!bg-primary !text-on-primary" 
+       class="flex items-center px-6 py-3 transition-colors text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 active:scale-[0.98] transition-transform cursor-pointer">
+      <span class="material-symbols-outlined mr-3">group</span>
+      <span class="font-body-md text-body-md font-medium">Khách hàng</span>
     </a>
 
-    @if (authService.hasRole('Admin')) {
+    <a routerLink="/admin/nhan-vien" 
+       routerLinkActive="!bg-primary !text-on-primary" 
+       class="flex items-center px-6 py-3 transition-colors text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 active:scale-[0.98] transition-transform cursor-pointer">
+      <span class="material-symbols-outlined mr-3">badge</span>
+      <span class="font-body-md text-body-md font-medium">Nhân viên</span>
+    </a>
 
-      <a
-        routerLink="/admin/nhan-vien"
-        routerLinkActive="bg-neutral-800"
-        class="flex items-center px-6 py-3 hover:bg-neutral-800 transition"
-      >
-        Nhân viên
-      </a>
+    <a routerLink="/admin/hoa-don" 
+       routerLinkActive="!bg-primary !text-on-primary" 
+       class="flex items-center px-6 py-3 transition-colors text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 active:scale-[0.98] transition-transform cursor-pointer">
+      <span class="material-symbols-outlined mr-3">receipt_long</span>
+      <span class="font-body-md text-body-md font-medium">Hóa đơn</span>
+    </a>
 
-    }
+    <a routerLink="/admin/khu-vuc-ban" 
+       routerLinkActive="!bg-primary !text-on-primary" 
+       class="flex items-center px-6 py-3 transition-colors text-on-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 active:scale-[0.98] transition-transform cursor-pointer">
+      <span class="material-symbols-outlined mr-3">table_bar</span>
+      <span class="font-body-md text-body-md font-medium">Khu vực & Bàn</span>
+    </a>
+    
+  </nav>
 
+  <div class="px-6 mt-auto pt-4 border-t border-outline-variant">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-primary-container text-primary flex items-center justify-center font-bold">
+        AD
+      </div>
+      <div>
+        <p class="font-body-sm text-body-sm font-semibold text-on-surface">Quản trị viên</p>
+        <p class="text-[11px] text-green-600 flex items-center gap-1">
+          <span class="w-2 h-2 bg-green-600 rounded-full"></span> Đang hoạt động
+        </p>
+      </div>
+    </div>
   </div>
-
 </div>

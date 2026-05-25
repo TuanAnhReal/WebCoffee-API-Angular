@@ -16,4 +16,5 @@ public class CTHD
 
     [ForeignKey("SoHD")] public HoaDon? HoaDon { get; set; }
     [ForeignKey("MaSP")] public SanPham? SanPham { get; set; }
+    public decimal GiaVon { get; set; }
 }

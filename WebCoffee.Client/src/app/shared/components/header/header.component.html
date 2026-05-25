@@ -1,24 +1,30 @@
-<div class="h-16 bg-white border-b flex items-center justify-between px-6">
+<div class="flex justify-between items-center h-full px-6">
 
-  <div>
-    <h2 class="text-xl font-semibold">
-      Admin Panel
-    </h2>
+  <div class="relative group">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+    <input
+      class="w-64 pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-sm focus:ring-2 focus:ring-primary focus:w-80 transition-all duration-300 outline-none"
+      placeholder="Tìm kiếm..." type="text" />
   </div>
 
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-6">
+    <div class="flex items-center gap-4">
+      <button class="relative hover:text-primary cursor-pointer active:scale-95 transition-transform">
+        <span class="material-symbols-outlined text-outline">notifications</span>
+        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+      </button>
+    </div>
 
-    <span class="text-sm text-gray-600">
-      {{ authService.currentUser()?.hoTen }}
-    </span>
+    <div class="h-8 w-[1px] bg-outline-variant"></div>
 
-    <button
-      (click)="logout()"
-      class="bg-red-500 text-white px-4 py-2 rounded-lg"
-    >
-      Đăng xuất
-    </button>
+    <div class="flex items-center gap-8">
+      <app-avatar [name]="displayName" size="md" />
 
+      <button (click)="logout()"
+        class="flex items-center gap-2 bg-error text-on-error px-4 py-2 rounded-lg hover:bg-opacity-90 active:scale-95 transition-all font-body-sm font-semibold">
+        <span class="material-symbols-outlined text-[18px]">logout</span>
+      </button>
+    </div>
   </div>
 
 </div>

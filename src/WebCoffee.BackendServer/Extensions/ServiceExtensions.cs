@@ -1,6 +1,8 @@
-﻿using WebCoffee.BackendServer.Services.BackgroundJobs;
-using WebCoffee.BackendServer.Services.Auth;
+﻿using Microsoft.Extensions.Configuration;
 using WebCoffee.BackendServer.Helpers;
+using WebCoffee.BackendServer.Services.Auth;
+using WebCoffee.BackendServer.Services.BackgroundJobs;
+using WebCoffee.BackendServer.Services.Dashboard;
 using WebCoffee.BackendServer.Services.HoaDons;
 using WebCoffee.BackendServer.Services.KhachHangs;
 using WebCoffee.BackendServer.Services.LoaiNVs;
@@ -8,13 +10,17 @@ using WebCoffee.BackendServer.Services.LoaiSPs;
 using WebCoffee.BackendServer.Services.NhanViens;
 using WebCoffee.BackendServer.Services.PhanQuyens;
 using WebCoffee.BackendServer.Services.SanPhams;
+using WebCoffee.BackendServer.Services.Storage;
 using WebCoffee.BackendServer.Services.TaiKhoans;
+using WebCoffee.BackendServer.Services.KhuVucBans;
 
 namespace WebCoffee.BackendServer.Extensions
 {
     public static class ServiceExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ITokenService, TokenService>();
@@ -28,6 +34,13 @@ namespace WebCoffee.BackendServer.Extensions
             services.AddTransient<IPhanQuyenService, PhanQuyenService>();
             services.AddTransient<ITaiKhoanService, TaiKhoanService>();
             services.AddTransient<IHoaDonService, HoaDonService>();
+            services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IKhuVucBanService, KhuVucBanService>();
+
+            services.Configure<CloudinarySettings>(
+                configuration.GetSection("CloudinarySettings"));
+
+            services.AddScoped<IStorageService, CloudinaryStorageService>();
 
             return services;
         }

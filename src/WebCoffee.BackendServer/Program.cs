@@ -120,7 +120,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 

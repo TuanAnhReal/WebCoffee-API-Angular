@@ -2,10 +2,10 @@
 {
     public class LoaiSPVm
     {
-        public string MaLoaiSP { get; set; }
-        public string TenLoaiSP { get; set; }
+        public string MaLoaiSp { get; set; }
+        public string TenLoaiSp { get; set; }
         public bool? LaHangDeVo { get; set; }
         public string BaoQuan { get; set; }
-        public string GhiChuLoaiSP { get; set; }
+        public string GhiChuLoaiSp { get; set; }
     }
 }

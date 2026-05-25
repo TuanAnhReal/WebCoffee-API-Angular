@@ -33,14 +33,14 @@ namespace WebCoffee.BackendServer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] NhanVienCreateRequest request)
+        public async Task<IActionResult> Create([FromForm] NhanVienCreateRequest request)
         {
             var result = await _nhanVienService.CreateAsync(request);
             return Created(string.Empty, ApiResponse<NhanVienVm>.SuccessResult(result, "Thêm nhân viên thành công", 201));
         }
 
         [HttpPut("{maNv}")]
-        public async Task<IActionResult> Update(string maNv, [FromBody] NhanVienUpdateRequest request)
+        public async Task<IActionResult> Update(string maNv, [FromForm] NhanVienUpdateRequest request)
         {
             var isSuccess = await _nhanVienService.UpdateAsync(maNv, request);
             if (!isSuccess) return NotFound(ApiResponse.ErrorResult("Không tìm thấy nhân viên để cập nhật", 404));

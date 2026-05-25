@@ -104,13 +104,5 @@ namespace WebCoffee.BackendServer.Controllers
 
             return Ok(new { success = true, message = "Đổi mật khẩu thành công. Tất cả các thiết bị đã bị đăng xuất, vui lòng đăng nhập lại!" });
         }
-
-        // --- API HỖ TRỢ TEST (Chỉ dùng lúc Dev) ---
-        [HttpGet("generate-hash")]
-        public IActionResult GenerateHash(string password)
-        {
-            string hash = BCrypt.Net.BCrypt.HashPassword(password);
-            return Ok(new { RawPassword = password, Hash = hash });
-        }
     }
 }

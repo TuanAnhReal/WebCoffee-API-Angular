@@ -10,5 +10,6 @@ public class KhachHang
     [MaxLength(100)] public string? TenKH { get; set; }
     [MaxLength(15)] public string? SDTKH { get; set; }
     public int? DiemTichLuy { get; set; }
+    public DateTime NgayTao { get; set; } = DateTime.Now;
     [MaxLength(255)] public string? GhiChuKH { get; set; }
 }

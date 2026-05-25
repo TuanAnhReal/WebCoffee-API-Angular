@@ -35,30 +35,39 @@ export class LoginComponent {
   });
 
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
 
-    this.isLoading = true;
-    
-    this.authService.login(this.loginForm.getRawValue()).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        
-        // Điều hướng thông minh dựa trên ReturnUrl
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+  if (this.loginForm.invalid || this.isLoading) {
+    return;
+  }
 
-this.router.navigateByUrl(returnUrl).then(res => {
-  console.log('NAVIGATION:', res);
-});
-        console.log('RETURN URL:', returnUrl);
+  this.isLoading = true;
 
-        
-        this.snackBar.open('Đăng nhập thành công', 'Đóng', { duration: 3000 });
+  this.authService
+    .login(this.loginForm.getRawValue())
+    .subscribe({
+
+      next: () => {
+        queueMicrotask(() => {
+
+          this.isLoading = false;
+
+          const returnUrl =
+            this.route.snapshot.queryParams['returnUrl']
+            || '/admin/dashboard';
+
+          this.router.navigateByUrl(returnUrl);
+
+        });
       },
-      error: (err) => {
-        this.isLoading = false;
-        // Interceptor lỗi sẽ lo việc hiển thị Snackbar sau, nhưng có thể fallback ở đây
-        this.loginForm.get('matKhau')?.reset(); 
+
+      error: () => {
+
+        queueMicrotask(() => {
+
+          this.isLoading = false;
+
+        });
       }
     });
-  }
+}
 }

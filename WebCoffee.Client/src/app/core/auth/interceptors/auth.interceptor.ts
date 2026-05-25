@@ -1,49 +1,23 @@
-import {
-  HttpInterceptorFn
-} from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
 
-import {
-  inject
-} from '@angular/core';
+import { inject } from '@angular/core';
 
 import { environment } from '../../../../environments/environment.development';
 
-import {
-  TokenService
-} from '../services/token.service';
+import { TokenService } from '../services/token.service';
 
-export const authInterceptor: HttpInterceptorFn = (
-  req,
-  next
-) => {
+export const authInterceptor: HttpInterceptorFn = ( req, next) => {
 
-  const tokenService =
-    inject(TokenService);
+  const tokenService = inject(TokenService);
+  const accessToken = tokenService.getAccessToken();
+  const isApiRequest = req.url.startsWith( environment.apiUrl );
 
-  const accessToken =
-    tokenService.getAccessToken();
-
-  const isApiRequest =
-    req.url.startsWith(
-      environment.apiUrl
-    );
-
-  if (
-    accessToken &&
-    isApiRequest
-  ) {
-
-    const authRequest =
-      req.clone({
-
-        setHeaders: {
-          Authorization:
-            `Bearer ${accessToken}`
-        }
+  if ( accessToken && isApiRequest ) {
+    const authRequest = req.clone({
+        setHeaders: { Authorization: `Bearer ${accessToken}` }
       });
-
     return next(authRequest);
   }
-
   return next(req);
 };
+

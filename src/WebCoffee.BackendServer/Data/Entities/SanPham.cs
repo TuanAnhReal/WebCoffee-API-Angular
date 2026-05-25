@@ -18,4 +18,5 @@ public class SanPham
 
     [ForeignKey("MaLoaiSP")] public LoaiSP? LoaiSP { get; set; }
     public ICollection<SanPham_KhuyenMai>? SanPham_KhuyenMais { get; set; }
+    public decimal GiaVon { get; set; }
 }

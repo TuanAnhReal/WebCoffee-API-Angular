@@ -4,8 +4,11 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  accessToken: string;
+  token: string;
   refreshToken: string;
+  username: string;
+  role: string;
+  expiration: string;
 }
 
 export interface RefreshTokenRequest {
@@ -13,9 +16,18 @@ export interface RefreshTokenRequest {
 }
 
 export interface UserPayload {
-  maNV: string;
-  tenDangNhap: string;
-  hoTen: string;
-  role: string;
+
+  // ClaimTypes.Name
+  'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': string;
+
+  // ClaimTypes.Role
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': string;
+
+  MaNV: string;
+
   exp: number;
+
+  iss: string;
+
+  aud: string;
 }

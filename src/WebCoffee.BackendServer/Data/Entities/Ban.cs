@@ -13,4 +13,5 @@ public class Ban
     [MaxLength(255)] public string? GhiChuBAN { get; set; }
 
     [ForeignKey("SoKV")] public KhuVuc? KhuVuc { get; set; }
+    public ICollection<DatBan>? DatBans { get; set; }
 }

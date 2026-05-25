@@ -9,8 +9,12 @@ namespace WebCoffee.BackendServer.Mappings
         public NhanVienProfile()
         {
             CreateMap<NhanVien, NhanVienVm>();
-            CreateMap<NhanVienCreateRequest, NhanVien>();
+
+            CreateMap<NhanVienCreateRequest, NhanVien>()
+                .ForMember(dest => dest.HinhAnhNV, opt => opt.Ignore());
+
             CreateMap<NhanVienUpdateRequest, NhanVien>()
+                .ForMember(dest => dest.HinhAnhNV, opt => opt.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }

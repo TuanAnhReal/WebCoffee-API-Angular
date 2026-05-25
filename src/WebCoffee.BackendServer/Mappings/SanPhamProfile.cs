@@ -8,15 +8,18 @@ namespace WebCoffee.BackendServer.Mappings
     {
         public SanPhamProfile()
         {
-            // Entity -> ViewModel
             CreateMap<SanPham, SanPhamVm>()
-                .ForMember(dest => dest.TenLoaiSp, opt => opt.MapFrom(src => src.LoaiSP.TenLoaiSP));
+                .ForMember(dest => dest.TenLoaiSp, opt => opt.MapFrom(src => src.LoaiSP.TenLoaiSP))
+                .ForMember(dest => dest.GiaSp, opt => opt.MapFrom(src => src.DonGia))
+                .ForMember(dest => dest.TrangThai, opt => opt.MapFrom(src => src.TrangThaiSP));
 
-            // Request -> Entity
             CreateMap<SanPhamCreateRequest, SanPham>()
-                .ForMember(dest => dest.TrangThaiSP, opt => opt.MapFrom(src => "Đang bán")); // Set mặc định
+                .ForMember(dest => dest.TrangThaiSP, opt => opt.MapFrom(src => src.TrangThai))
+                .ForMember(dest => dest.HinhAnh, opt => opt.Ignore());
 
-            CreateMap<SanPhamUpdateRequest, SanPham>();
+            CreateMap<SanPhamUpdateRequest, SanPham>()
+                .ForMember(dest => dest.TrangThaiSP, opt => opt.MapFrom(src => src.TrangThai))
+                .ForMember(dest => dest.HinhAnh, opt => opt.Ignore());
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebCoffee.BackendServer.Data;
 using WebCoffee.BackendServer.Data.Entities;
+using WebCoffee.BackendServer.Services.Storage;
 using WebCoffee.ViewModels.Catalog.NhanViens;
 
 namespace WebCoffee.BackendServer.Services.NhanViens
@@ -10,11 +11,13 @@ namespace WebCoffee.BackendServer.Services.NhanViens
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IStorageService _storageService;
 
-        public NhanVienService(AppDbContext context, IMapper mapper)
+        public NhanVienService(AppDbContext context, IMapper mapper, IStorageService storageService)
         {
             _context = context;
             _mapper = mapper;
+            _storageService = storageService;
         }
 
         public async Task<List<NhanVienVm>> GetAllAsync()
@@ -37,9 +40,13 @@ namespace WebCoffee.BackendServer.Services.NhanViens
             entity.MaNV = "NV" + DateTime.Now.ToString("HHmmss");
             entity.TrangThaiNV = request.TrangThaiNV ?? "Đang làm việc";
 
+            if (request.HinhAnhNV != null && request.HinhAnhNV.Length > 0)
+            {
+                entity.HinhAnhNV = await _storageService.UploadImageAsync(request.HinhAnhNV, "NhanViens");
+            }
+
             _context.NhanViens.Add(entity);
             await _context.SaveChangesAsync();
-
             return _mapper.Map<NhanVienVm>(entity);
         }
 
@@ -47,6 +54,15 @@ namespace WebCoffee.BackendServer.Services.NhanViens
         {
             var entity = await _context.NhanViens.FindAsync(maNv);
             if (entity == null) return false;
+
+            if (request.HinhAnhNV != null && request.HinhAnhNV.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(entity.HinhAnhNV) && entity.HinhAnhNV.StartsWith("http"))
+                {
+                    await _storageService.DeleteImageAsync(entity.HinhAnhNV);
+                }
+                entity.HinhAnhNV = await _storageService.UploadImageAsync(request.HinhAnhNV, "NhanViens");
+            }
 
             _mapper.Map(request, entity);
             _context.NhanViens.Update(entity);

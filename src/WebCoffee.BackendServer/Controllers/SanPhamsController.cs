@@ -37,7 +37,8 @@ namespace WebCoffee.BackendServer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SanPhamCreateRequest request)
+        [Authorize]
+        public async Task<IActionResult> Create([FromForm] SanPhamCreateRequest request)
         {
             var result = await _sanPhamService.CreateAsync(request);
 
@@ -45,7 +46,7 @@ namespace WebCoffee.BackendServer.Controllers
         }
 
         [HttpPut("{maSp}")]
-        public async Task<IActionResult> Update(string maSp, [FromBody] SanPhamUpdateRequest request)
+        public async Task<IActionResult> Update(string maSp, [FromForm] SanPhamUpdateRequest request)
         {
             var isSuccess = await _sanPhamService.UpdateAsync(maSp, request);
 

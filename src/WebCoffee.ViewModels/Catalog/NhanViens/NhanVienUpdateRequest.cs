@@ -1,4 +1,6 @@
-﻿namespace WebCoffee.ViewModels.Catalog.NhanViens
+﻿using Microsoft.AspNetCore.Http;
+
+namespace WebCoffee.ViewModels.Catalog.NhanViens
 {
     public class NhanVienUpdateRequest
     {
@@ -15,7 +17,7 @@
         public string TenNgHNV { get; set; }
         public string SoBHYT { get; set; }
         public string SoBHXH { get; set; }
-        public string HinhAnhNV { get; set; }
+        public IFormFile? HinhAnhNV { get; set; }
         public string TrinhDoHV { get; set; }
         public string GhiChuNV { get; set; }
         public string TrangThaiNV { get; set; }

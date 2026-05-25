@@ -21,8 +21,7 @@ namespace WebCoffee.BackendServer.Services.HoaDons
         {
             var entities = await _context.HoaDons
                 .OrderByDescending(x => x.TGVao)
-                .ToListAsync(); // Nếu muốn lấy luôn CTHD ở list thì thêm .Include(x => x.CTHDs)
-
+                .ToListAsync();
             return _mapper.Map<List<HoaDonVm>>(entities);
         }
 
@@ -38,15 +37,11 @@ namespace WebCoffee.BackendServer.Services.HoaDons
 
         public async Task<HoaDonVm> CreateAsync(HoaDonCreateRequest request)
         {
-            // 1. Ánh xạ toàn bộ Request (bao gồm cả mảng ChiTiet) sang Entity
             var hd = _mapper.Map<HoaDon>(request);
 
-            // 2. Cài đặt các thông tin tự động của Hóa Đơn
-            hd.SoHD = "HD" + DateTime.Now.ToString("yyMMddHHmmss");
+            hd.SoHD = "HD" + DateTime.Now.ToString("HHmmss");
             hd.TGVao = DateTime.Now;
             hd.TrangThaiHD = "Chưa thanh toán";
-
-            // 3. Xử lý Business Logic: Tính toán trên các Chi Tiết Hóa Đơn (đã được map)
             decimal tongTienSanPham = 0;
             int indexCT = 1;
 
@@ -58,11 +53,8 @@ namespace WebCoffee.BackendServer.Services.HoaDons
 
                 tongTienSanPham += cthd.ThanhTien ?? 0;
             }
-
-            // 4. Chốt Tổng Tiền
             hd.TongTien = tongTienSanPham + hd.PhuThu + hd.ThueVAT - hd.GiamGiaHD;
 
-            // 5. Lưu vào DB (EF Core sẽ tự động lưu cả Hóa Đơn và List CTHD cùng lúc)
             _context.HoaDons.Add(hd);
             await _context.SaveChangesAsync();
 

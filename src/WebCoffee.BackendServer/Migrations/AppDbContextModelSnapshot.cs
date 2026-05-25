@@ -83,6 +83,9 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Property<decimal?>("DonGia")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("GiaVon")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<decimal?>("GiamGia")
                         .HasColumnType("decimal(18,2)");
 
@@ -227,6 +230,9 @@ namespace WebCoffee.BackendServer.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<DateTime>("NgayTao")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SDTKH")
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
@@ -238,6 +244,24 @@ namespace WebCoffee.BackendServer.Migrations
                     b.HasKey("MaKH");
 
                     b.ToTable("KH");
+
+                    b.HasData(
+                        new
+                        {
+                            MaKH = "KH01",
+                            DiemTichLuy = 0,
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SDTKH = "0000000000",
+                            TenKH = "Khách Lẻ"
+                        },
+                        new
+                        {
+                            MaKH = "KH02",
+                            DiemTichLuy = 150,
+                            NgayTao = new DateTime(2024, 5, 23, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            SDTKH = "0901234567",
+                            TenKH = "Nguyễn Anh Tú"
+                        });
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.KhuVuc", b =>
@@ -604,6 +628,9 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Property<decimal>("DonGia")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("GiaVon")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<string>("HinhAnh")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -642,6 +669,7 @@ namespace WebCoffee.BackendServer.Migrations
                             MaSP = "SP01",
                             DVT = "Ly",
                             DonGia = 25000m,
+                            GiaVon = 8000m,
                             MaLoaiSP = "LSP01",
                             TenSP = "Cà phê đen đá",
                             TrangThaiSP = "Đang bán"
@@ -651,6 +679,7 @@ namespace WebCoffee.BackendServer.Migrations
                             MaSP = "SP02",
                             DVT = "Ly",
                             DonGia = 30000m,
+                            GiaVon = 12000m,
                             MaLoaiSP = "LSP01",
                             TenSP = "Bạc xỉu",
                             TrangThaiSP = "Đang bán"
@@ -660,6 +689,7 @@ namespace WebCoffee.BackendServer.Migrations
                             MaSP = "SP03",
                             DVT = "Ly",
                             DonGia = 45000m,
+                            GiaVon = 15000m,
                             MaLoaiSP = "LSP02",
                             TenSP = "Trà đào cam sả",
                             TrangThaiSP = "Đang bán"
@@ -726,7 +756,7 @@ namespace WebCoffee.BackendServer.Migrations
                             TenDangNhap = "admin",
                             MaNV = "NV01",
                             MaPQ = "PQ01",
-                            MatKhau = "123456",
+                            MatKhau = "$2a$12$Ni4r2Ts3e0aM8IS4GEk3/uS.TlZ2jSVhgiZOuKAR0XyzfjDL0Ts.y",
                             TrangThaiTK = "Hoạt động"
                         },
                         new
@@ -734,7 +764,7 @@ namespace WebCoffee.BackendServer.Migrations
                             TenDangNhap = "nhanvien1",
                             MaNV = "NV02",
                             MaPQ = "PQ02",
-                            MatKhau = "123456",
+                            MatKhau = "$2a$12$Ni4r2Ts3e0aM8IS4GEk3/uS.TlZ2jSVhgiZOuKAR0XyzfjDL0Ts.y",
                             TrangThaiTK = "Hoạt động"
                         });
                 });
