@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7234/api'
+  apiUrl: 'http://coffeeaka.somee.com/api'
 };

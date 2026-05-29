@@ -20,45 +20,35 @@ namespace WebCoffee.BackendServer.Services.KhuVucBans
 
         public async Task<ApiResponse<List<KhuVucVm>>> GetAllWithBansAsync()
         {
-            // Lấy ngày hiện tại để chỉ check các lượt đặt bàn trong ngày
-            var today = DateTime.Today;
-
             var data = await _context.KhuVucs
                 .Include(k => k.Bans)
-                    .ThenInclude(b => b.DatBans.Where(d => d.NgayDat == today && d.TrangThaiDat != "Đã hủy"))
-                // Cần bổ sung public ICollection<DatBan>? DatBans { get; set; } vào Entity Ban.cs
-                .Include(k => k.Bans)
-                    .ThenInclude(b => b.DatBans)
-                        .ThenInclude(d => d.KhachHang) // Để lấy tên khách
                 .Select(k => new KhuVucVm
                 {
                     SoKV = k.SoKV,
                     TenKV = k.TenKV,
+                    TGMo = k.TGMo,
+                    TGDong = k.TGDong,
                     TrangThaiKhu = k.TrangThaiKhu,
+                    PhuThuKV = k.PhuThuKV,
+                    GhiChuKV = k.GhiChuKV,
                     Bans = k.Bans.Select(b => new BanVm
                     {
                         SoBan = b.SoBan,
                         SoKV = b.SoKV,
                         TenBan = b.TenBan,
                         TrangThaiBan = b.TrangThaiBan,
-
-                        // Lấy lượt đặt bàn gần nhất trong tương lai
-                        ThoiGianDatSắpToi = b.DatBans
-                            .Where(d => d.GioDat >= DateTime.Now.TimeOfDay)
-                            .OrderBy(d => d.GioDat)
-                            .Select(d => d.GioDat)
-                            .FirstOrDefault(),
-
-                        TenKhachDat = b.DatBans
-                            .Where(d => d.GioDat >= DateTime.Now.TimeOfDay)
-                            .OrderBy(d => d.GioDat)
-                            .Select(d => d.KhachHang.TenKH) // Tùy thuộc vào cột tên trong Entity KhachHang của bạn
-                            .FirstOrDefault()
+                        GhiChuBAN = b.GhiChuBAN
                     }).ToList()
                 })
                 .ToListAsync();
 
-            return new ApiResponse<List<KhuVucVm>> { Success = true, Data = data, StatusCode = 200 };
+            return new ApiResponse<List<KhuVucVm>>
+            {
+                Success = true,
+                Message = "Lấy danh sách Khu Vực & Bàn thành công",
+                Data = data,
+                StatusCode = 200
+            };
         }
 
         // ================= KHU VỰC =================
@@ -151,7 +141,14 @@ namespace WebCoffee.BackendServer.Services.KhuVucBans
         {
             var ban = await _context.Bans.FindAsync(soBan);
             if (ban == null) return new ApiResponse<bool> { Success = false, Message = "Không tìm thấy bàn" };
-
+            if (ban.TrangThaiBan == "Đang phục vụ" || ban.TrangThaiBan == "Đã đặt")
+            {
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "Bàn đang có khách sử dụng hoặc đã được đặt trước. Không thể xóa!"
+                };
+            }
             _context.Bans.Remove(ban);
             await _context.SaveChangesAsync();
             return new ApiResponse<bool> { Success = true, Message = "Xóa bàn thành công" };

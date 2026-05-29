@@ -12,6 +12,8 @@ namespace WebCoffee.BackendServer.Data
         public DbSet<LoaiSP> LoaiSPs { get; set; }
         public DbSet<SanPham> SanPhams { get; set; }
         public DbSet<LoaiNV> LoaiNVs { get; set; }
+        public DbSet<CaLam> CaLams { get; set; }
+        public DbSet<ChamCong> ChamCongs { get; set; }
         public DbSet<NhanVien> NhanViens { get; set; }
         public DbSet<PhanQuyen> PhanQuyens { get; set; }
         public DbSet<TaiKhoan> TaiKhoans { get; set; }
@@ -29,6 +31,29 @@ namespace WebCoffee.BackendServer.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ChamCong>()
+                .HasOne(c => c.CaLam)
+                .WithMany(cl => cl.ChamCongs)
+                .HasForeignKey(c => c.MaCaLam)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CaLam>().HasData(
+                new CaLam
+                {
+                    MaCaLam = "CA01",
+                    TenCa = "Ca sáng",
+                    TgVaoCa = "06:00:00",
+                    TgRaCa = "14:00:00"
+                },
+                new CaLam
+                {
+                    MaCaLam = "CA02",
+                    TenCa = "Ca tối",
+                    TgVaoCa = "14:00:00",
+                    TgRaCa = "22:00:00"
+                }
+            );
 
             modelBuilder.Entity<SanPham>()
                 .Property(s => s.GiaVon)
@@ -67,7 +92,8 @@ namespace WebCoffee.BackendServer.Data
 
             modelBuilder.Entity<NhanVien>().HasData(
                 new NhanVien { MaNV = "NV01", MaLoaiNV = "LNV01", HoNV = "Nguyễn Văn", TenNV = "An", PhaiNV = true, TrangThaiNV = "Đang làm" },
-                new NhanVien { MaNV = "NV02", MaLoaiNV = "LNV02", HoNV = "Trần Thị", TenNV = "Bình", PhaiNV = false, TrangThaiNV = "Đang làm" }
+                new NhanVien { MaNV = "NV02", MaLoaiNV = "LNV02", HoNV = "Trần Thị", TenNV = "Bình", PhaiNV = false, TrangThaiNV = "Đang làm" },
+                new NhanVien { MaNV = "NV230158", MaLoaiNV = "LNV02", HoNV = "Nguyễn Văn", TenNV = "Kha", PhaiNV = false, TrangThaiNV = "Đang làm" }
             );
 
             modelBuilder.Entity<TaiKhoan>().HasData(
@@ -102,6 +128,7 @@ namespace WebCoffee.BackendServer.Data
                 new Ban { SoBan = "B02", SoKV = "KV01", TenBan = "Bàn 2 Trệt", TrangThaiBan = "Trống" },
                 new Ban { SoBan = "B03", SoKV = "KV02", TenBan = "Bàn 1 Sân Thượng", TrangThaiBan = "Trống" }
             );
+
         }
     }
 }

@@ -12,8 +12,8 @@ using WebCoffee.BackendServer.Data;
 namespace WebCoffee.BackendServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260512065904_InitDB")]
-    partial class InitDB
+    [Migration("20260529080226_SeedData10")]
+    partial class SeedData10
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,6 +86,9 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Property<decimal?>("DonGia")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("GiaVon")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<decimal?>("GiamGia")
                         .HasColumnType("decimal(18,2)");
 
@@ -112,102 +115,82 @@ namespace WebCoffee.BackendServer.Migrations
                     b.ToTable("CTHD");
                 });
 
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.CTPhieuNhap", b =>
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.CaLam", b =>
                 {
-                    b.Property<string>("SoCTPN")
+                    b.Property<string>("MaCaLam")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("MaCaLam");
 
-                    b.Property<decimal?>("DonGiaNhap")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("TenCa")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("TenCa");
 
-                    b.Property<string>("GhiChuCTPN")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("TgRaCa")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)")
+                        .HasColumnName("TgRaCa");
 
-                    b.Property<string>("MaSP")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.Property<string>("TgVaoCa")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)")
+                        .HasColumnName("TgVaoCa");
 
-                    b.Property<int?>("SLN")
-                        .HasColumnType("int");
+                    b.HasKey("MaCaLam");
 
-                    b.Property<string>("SoPN")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.ToTable("CALAM");
 
-                    b.Property<decimal?>("ThanhTienNhap")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("SoCTPN");
-
-                    b.HasIndex("MaSP");
-
-                    b.HasIndex("SoPN");
-
-                    b.ToTable("CTPNHAP");
+                    b.HasData(
+                        new
+                        {
+                            MaCaLam = "CA01",
+                            TenCa = "Ca sáng",
+                            TgRaCa = "14:00:00",
+                            TgVaoCa = "06:00:00"
+                        },
+                        new
+                        {
+                            MaCaLam = "CA02",
+                            TenCa = "Ca tối",
+                            TgRaCa = "22:00:00",
+                            TgVaoCa = "14:00:00"
+                        });
                 });
 
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.CTPhieuNhapNL", b =>
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.ChamCong", b =>
                 {
-                    b.Property<string>("SoCTPNNL")
+                    b.Property<string>("MaChamCong")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("MaChamCong");
+
+                    b.Property<string>("MaCaLam")
+                        .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("MaCaLam");
 
-                    b.Property<decimal?>("DonGiaNhapNL")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("MaNL")
+                    b.Property<string>("MaNV")
+                        .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("MaNV");
 
-                    b.Property<decimal?>("SLNhapNL")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<DateTime>("TgChamCong")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("TgChamCong");
 
-                    b.Property<string>("SoPNNL")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.HasKey("MaChamCong");
 
-                    b.Property<decimal?>("ThanhTienNhapNL")
-                        .HasColumnType("decimal(18,2)");
+                    b.HasIndex("MaCaLam");
 
-                    b.HasKey("SoCTPNNL");
+                    b.HasIndex("MaNV");
 
-                    b.HasIndex("MaNL");
-
-                    b.HasIndex("SoPNNL");
-
-                    b.ToTable("CTPHIEUNHAP_NL");
-                });
-
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.CongThuc", b =>
-                {
-                    b.Property<string>("MaCT")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("GhiChuCT")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("MaNL")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("MaSP")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<decimal?>("SoLuongNL")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("MaCT");
-
-                    b.HasIndex("MaNL");
-
-                    b.HasIndex("MaSP");
-
-                    b.ToTable("CONGTHUC");
+                    b.ToTable("CHAMCONG");
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.DatBan", b =>
@@ -328,6 +311,9 @@ namespace WebCoffee.BackendServer.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<DateTime>("NgayTao")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SDTKH")
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
@@ -339,6 +325,24 @@ namespace WebCoffee.BackendServer.Migrations
                     b.HasKey("MaKH");
 
                     b.ToTable("KH");
+
+                    b.HasData(
+                        new
+                        {
+                            MaKH = "KH01",
+                            DiemTichLuy = 0,
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SDTKH = "0000000000",
+                            TenKH = "Khách Lẻ"
+                        },
+                        new
+                        {
+                            MaKH = "KH02",
+                            DiemTichLuy = 150,
+                            NgayTao = new DateTime(2024, 5, 23, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            SDTKH = "0901234567",
+                            TenKH = "Nguyễn Anh Tú"
+                        });
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.KhuVuc", b =>
@@ -427,43 +431,6 @@ namespace WebCoffee.BackendServer.Migrations
                     b.HasKey("MaKM");
 
                     b.ToTable("KHUYENMAI");
-                });
-
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.LichSuKho", b =>
-                {
-                    b.Property<string>("MaLSKho")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("GhiChuLSK")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("LoaiGD")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("MaNL")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("NguoiThucHien")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<decimal?>("SoLuongGD")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("ThoiGianGD")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("MaLSKho");
-
-                    b.HasIndex("MaNL");
-
-                    b.HasIndex("NguoiThucHien");
-
-                    b.ToTable("LICHSU_KHO");
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.LoaiNV", b =>
@@ -558,95 +525,6 @@ namespace WebCoffee.BackendServer.Migrations
                             LaHangDeVo = true,
                             TenLoaiSP = "Bánh ngọt"
                         });
-                });
-
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.NguyenLieu", b =>
-                {
-                    b.Property<string>("MaNL")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("DVTNL")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal?>("DonGiaNL")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("GhiChuNL")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("HanSuDung")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("MucCanhBao")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("SoLuongTon")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("TenNL")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("TrangThaiNL")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("MaNL");
-
-                    b.ToTable("NGUYENLIEU");
-
-                    b.HasData(
-                        new
-                        {
-                            MaNL = "NL01",
-                            DVTNL = "Kg",
-                            DonGiaNL = 150000m,
-                            SoLuongTon = 10m,
-                            TenNL = "Hạt Cà Phê Robusta"
-                        },
-                        new
-                        {
-                            MaNL = "NL02",
-                            DVTNL = "Lon",
-                            DonGiaNL = 25000m,
-                            SoLuongTon = 20m,
-                            TenNL = "Sữa Đặc"
-                        });
-                });
-
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.NhaCungCap", b =>
-                {
-                    b.Property<string>("MaNCC")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("DiaChiNCC")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("GhiChuNCC")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("SDTNCC")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<string>("SoTKNCC")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("TenNCC")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("MaNCC");
-
-                    b.ToTable("NCC");
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.NhanVien", b =>
@@ -748,6 +626,15 @@ namespace WebCoffee.BackendServer.Migrations
                             PhaiNV = false,
                             TenNV = "Bình",
                             TrangThaiNV = "Đang làm"
+                        },
+                        new
+                        {
+                            MaNV = "NV230158",
+                            HoNV = "Nguyễn Văn",
+                            MaLoaiNV = "LNV02",
+                            PhaiNV = false,
+                            TenNV = "Kha",
+                            TrangThaiNV = "Đang làm"
                         });
                 });
 
@@ -785,74 +672,37 @@ namespace WebCoffee.BackendServer.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.PhieuNhap", b =>
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.RefreshToken", b =>
                 {
-                    b.Property<string>("SoPN")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("GhiChuPN")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("MaNCC")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("MaNV")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<DateTime?>("NgayNhap")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NhapHang")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<decimal?>("TongTienNhap")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("SoPN");
-
-                    b.HasIndex("MaNCC");
-
-                    b.HasIndex("MaNV");
-
-                    b.ToTable("PNHAP");
-                });
-
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.PhieuNhapNL", b =>
-                {
-                    b.Property<string>("SoPNNL")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("GhiChuPNNL")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("MaNCC")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("MaNV")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<DateTime?>("NgayNhapNL")
+                    b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("TongTienNhapNL")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
 
-                    b.HasKey("SoPNNL");
+                    b.Property<string>("TenDangNhap")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.HasIndex("MaNCC");
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("MaNV");
+                    b.HasKey("Id");
 
-                    b.ToTable("PHIEUNHAP_NL");
+                    b.HasIndex("TenDangNhap");
+
+                    b.ToTable("REFRESHTOKEN");
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.SanPham", b =>
@@ -867,6 +717,9 @@ namespace WebCoffee.BackendServer.Migrations
 
                     b.Property<decimal>("DonGia")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("GiaVon")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("HinhAnh")
                         .HasMaxLength(255)
@@ -906,6 +759,7 @@ namespace WebCoffee.BackendServer.Migrations
                             MaSP = "SP01",
                             DVT = "Ly",
                             DonGia = 25000m,
+                            GiaVon = 8000m,
                             MaLoaiSP = "LSP01",
                             TenSP = "Cà phê đen đá",
                             TrangThaiSP = "Đang bán"
@@ -915,6 +769,7 @@ namespace WebCoffee.BackendServer.Migrations
                             MaSP = "SP02",
                             DVT = "Ly",
                             DonGia = 30000m,
+                            GiaVon = 12000m,
                             MaLoaiSP = "LSP01",
                             TenSP = "Bạc xỉu",
                             TrangThaiSP = "Đang bán"
@@ -924,6 +779,7 @@ namespace WebCoffee.BackendServer.Migrations
                             MaSP = "SP03",
                             DVT = "Ly",
                             DonGia = 45000m,
+                            GiaVon = 15000m,
                             MaLoaiSP = "LSP02",
                             TenSP = "Trà đào cam sả",
                             TrangThaiSP = "Đang bán"
@@ -990,7 +846,7 @@ namespace WebCoffee.BackendServer.Migrations
                             TenDangNhap = "admin",
                             MaNV = "NV01",
                             MaPQ = "PQ01",
-                            MatKhau = "123456",
+                            MatKhau = "$2a$12$Ni4r2Ts3e0aM8IS4GEk3/uS.TlZ2jSVhgiZOuKAR0XyzfjDL0Ts.y",
                             TrangThaiTK = "Hoạt động"
                         },
                         new
@@ -998,7 +854,7 @@ namespace WebCoffee.BackendServer.Migrations
                             TenDangNhap = "nhanvien1",
                             MaNV = "NV02",
                             MaPQ = "PQ02",
-                            MatKhau = "123456",
+                            MatKhau = "$2a$12$Ni4r2Ts3e0aM8IS4GEk3/uS.TlZ2jSVhgiZOuKAR0XyzfjDL0Ts.y",
                             TrangThaiTK = "Hoạt động"
                         });
                 });
@@ -1058,49 +914,23 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Navigation("SanPham");
                 });
 
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.CTPhieuNhap", b =>
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.ChamCong", b =>
                 {
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.SanPham", "SanPham")
+                    b.HasOne("WebCoffee.BackendServer.Data.Entities.CaLam", "CaLam")
+                        .WithMany("ChamCongs")
+                        .HasForeignKey("MaCaLam")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NhanVien", "NhanVien")
                         .WithMany()
-                        .HasForeignKey("MaSP");
+                        .HasForeignKey("MaNV")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.PhieuNhap", "PhieuNhap")
-                        .WithMany("CTPhieuNhaps")
-                        .HasForeignKey("SoPN");
+                    b.Navigation("CaLam");
 
-                    b.Navigation("PhieuNhap");
-
-                    b.Navigation("SanPham");
-                });
-
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.CTPhieuNhapNL", b =>
-                {
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NguyenLieu", "NguyenLieu")
-                        .WithMany()
-                        .HasForeignKey("MaNL");
-
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.PhieuNhapNL", "PhieuNhapNL")
-                        .WithMany()
-                        .HasForeignKey("SoPNNL");
-
-                    b.Navigation("NguyenLieu");
-
-                    b.Navigation("PhieuNhapNL");
-                });
-
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.CongThuc", b =>
-                {
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NguyenLieu", "NguyenLieu")
-                        .WithMany("CongThucs")
-                        .HasForeignKey("MaNL");
-
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.SanPham", "SanPham")
-                        .WithMany("CongThucs")
-                        .HasForeignKey("MaSP");
-
-                    b.Navigation("NguyenLieu");
-
-                    b.Navigation("SanPham");
+                    b.Navigation("NhanVien");
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.DatBan", b =>
@@ -1110,7 +940,7 @@ namespace WebCoffee.BackendServer.Migrations
                         .HasForeignKey("MaKH");
 
                     b.HasOne("WebCoffee.BackendServer.Data.Entities.Ban", "Ban")
-                        .WithMany()
+                        .WithMany("DatBans")
                         .HasForeignKey("SoBan");
 
                     b.Navigation("Ban");
@@ -1147,21 +977,6 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Navigation("NhanVienPhucVu");
                 });
 
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.LichSuKho", b =>
-                {
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NguyenLieu", "NguyenLieu")
-                        .WithMany()
-                        .HasForeignKey("MaNL");
-
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NhanVien", "NhanVien")
-                        .WithMany()
-                        .HasForeignKey("NguoiThucHien");
-
-                    b.Navigation("NguyenLieu");
-
-                    b.Navigation("NhanVien");
-                });
-
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.NhanVien", b =>
                 {
                     b.HasOne("WebCoffee.BackendServer.Data.Entities.LoaiNV", "LoaiNV")
@@ -1173,34 +988,15 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Navigation("LoaiNV");
                 });
 
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.PhieuNhap", b =>
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.RefreshToken", b =>
                 {
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NhaCungCap", "NhaCungCap")
+                    b.HasOne("WebCoffee.BackendServer.Data.Entities.TaiKhoan", "TaiKhoan")
                         .WithMany()
-                        .HasForeignKey("MaNCC");
+                        .HasForeignKey("TenDangNhap")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NhanVien", "NhanVien")
-                        .WithMany()
-                        .HasForeignKey("MaNV");
-
-                    b.Navigation("NhaCungCap");
-
-                    b.Navigation("NhanVien");
-                });
-
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.PhieuNhapNL", b =>
-                {
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NhaCungCap", "NhaCungCap")
-                        .WithMany()
-                        .HasForeignKey("MaNCC");
-
-                    b.HasOne("WebCoffee.BackendServer.Data.Entities.NhanVien", "NhanVien")
-                        .WithMany()
-                        .HasForeignKey("MaNV");
-
-                    b.Navigation("NhaCungCap");
-
-                    b.Navigation("NhanVien");
+                    b.Navigation("TaiKhoan");
                 });
 
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.SanPham", b =>
@@ -1261,6 +1057,16 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Navigation("HoaDon");
                 });
 
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.Ban", b =>
+                {
+                    b.Navigation("DatBans");
+                });
+
+            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.CaLam", b =>
+                {
+                    b.Navigation("ChamCongs");
+                });
+
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.HoaDon", b =>
                 {
                     b.Navigation("CTHDs");
@@ -1286,11 +1092,6 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Navigation("SanPhams");
                 });
 
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.NguyenLieu", b =>
-                {
-                    b.Navigation("CongThucs");
-                });
-
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.NhanVien", b =>
                 {
                     b.Navigation("TaiKhoan");
@@ -1301,15 +1102,8 @@ namespace WebCoffee.BackendServer.Migrations
                     b.Navigation("TaiKhoans");
                 });
 
-            modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.PhieuNhap", b =>
-                {
-                    b.Navigation("CTPhieuNhaps");
-                });
-
             modelBuilder.Entity("WebCoffee.BackendServer.Data.Entities.SanPham", b =>
                 {
-                    b.Navigation("CongThucs");
-
                     b.Navigation("SanPham_KhuyenMais");
                 });
 #pragma warning restore 612, 618

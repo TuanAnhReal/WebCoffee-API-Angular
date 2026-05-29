@@ -38,6 +38,7 @@ namespace WebCoffee.BackendServer.Services.KhachHangs
             entity.MaKH = "KH" + DateTime.Now.ToString("HHmmss");
             entity.TenKH = string.IsNullOrWhiteSpace(request.TenKH) ? "Khách vãng lai" : request.TenKH;
             entity.DiemTichLuy = request.DiemTichLuy ?? 0;
+            entity.NgayTao = DateTime.Now;
 
             _context.KhachHangs.Add(entity);
             await _context.SaveChangesAsync();

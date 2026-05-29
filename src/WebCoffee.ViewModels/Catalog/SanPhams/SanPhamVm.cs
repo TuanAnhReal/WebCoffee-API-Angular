@@ -6,7 +6,7 @@
         public string TenSp { get; set; }
         public decimal GiaVon { get; set; }
         public decimal GiaSp { get; set; }
-        public string MoTa { get; set; }
+        public string? MoTa { get; set; }
         public string TrangThai { get; set; }
         public string MaLoaiSp { get; set; }
         public string TenLoaiSp { get; set; }

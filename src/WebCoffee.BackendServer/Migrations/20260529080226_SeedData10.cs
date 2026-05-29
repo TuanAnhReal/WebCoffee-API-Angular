@@ -8,11 +8,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebCoffee.BackendServer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDB : Migration
+    public partial class SeedData10 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "CALAM",
+                columns: table => new
+                {
+                    MaCaLam = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    TenCa = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TgVaoCa = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    TgRaCa = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CALAM", x => x.MaCaLam);
+                });
+
             migrationBuilder.CreateTable(
                 name: "KH",
                 columns: table => new
@@ -21,6 +35,7 @@ namespace WebCoffee.BackendServer.Migrations
                     TenKH = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     SDTKH = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
                     DiemTichLuy = table.Column<int>(type: "int", nullable: true),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     GhiChuKH = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
@@ -92,41 +107,6 @@ namespace WebCoffee.BackendServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LOAISP", x => x.MaLoaiSP);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NCC",
-                columns: table => new
-                {
-                    MaNCC = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    TenNCC = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    DiaChiNCC = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    SoTKNCC = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    SDTNCC = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
-                    GhiChuNCC = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NCC", x => x.MaNCC);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NGUYENLIEU",
-                columns: table => new
-                {
-                    MaNL = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    TenNL = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    DVTNL = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    SoLuongTon = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    MucCanhBao = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    DonGiaNL = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    HanSuDung = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TrangThaiNL = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    GhiChuNL = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NGUYENLIEU", x => x.MaNL);
                 });
 
             migrationBuilder.CreateTable(
@@ -208,7 +188,8 @@ namespace WebCoffee.BackendServer.Migrations
                     KichThuoc = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     HinhAnh = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     MoTa = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    TrangThaiSP = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                    TrangThaiSP = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    GiaVon = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -247,6 +228,32 @@ namespace WebCoffee.BackendServer.Migrations
                         column: x => x.MaKH,
                         principalTable: "KH",
                         principalColumn: "MaKH");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CHAMCONG",
+                columns: table => new
+                {
+                    MaChamCong = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    MaNV = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    MaCaLam = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    TgChamCong = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CHAMCONG", x => x.MaChamCong);
+                    table.ForeignKey(
+                        name: "FK_CHAMCONG_CALAM_MaCaLam",
+                        column: x => x.MaCaLam,
+                        principalTable: "CALAM",
+                        principalColumn: "MaCaLam",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CHAMCONG_NHANVIEN_MaNV",
+                        column: x => x.MaNV,
+                        principalTable: "NHANVIEN",
+                        principalColumn: "MaNV",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -296,86 +303,6 @@ namespace WebCoffee.BackendServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LICHSU_KHO",
-                columns: table => new
-                {
-                    MaLSKho = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    MaNL = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    NguoiThucHien = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    LoaiGD = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    SoLuongGD = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    ThoiGianGD = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GhiChuLSK = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LICHSU_KHO", x => x.MaLSKho);
-                    table.ForeignKey(
-                        name: "FK_LICHSU_KHO_NGUYENLIEU_MaNL",
-                        column: x => x.MaNL,
-                        principalTable: "NGUYENLIEU",
-                        principalColumn: "MaNL");
-                    table.ForeignKey(
-                        name: "FK_LICHSU_KHO_NHANVIEN_NguoiThucHien",
-                        column: x => x.NguoiThucHien,
-                        principalTable: "NHANVIEN",
-                        principalColumn: "MaNV");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PHIEUNHAP_NL",
-                columns: table => new
-                {
-                    SoPNNL = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    MaNCC = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    MaNV = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    NgayNhapNL = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TongTienNhapNL = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    GhiChuPNNL = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PHIEUNHAP_NL", x => x.SoPNNL);
-                    table.ForeignKey(
-                        name: "FK_PHIEUNHAP_NL_NCC_MaNCC",
-                        column: x => x.MaNCC,
-                        principalTable: "NCC",
-                        principalColumn: "MaNCC");
-                    table.ForeignKey(
-                        name: "FK_PHIEUNHAP_NL_NHANVIEN_MaNV",
-                        column: x => x.MaNV,
-                        principalTable: "NHANVIEN",
-                        principalColumn: "MaNV");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PNHAP",
-                columns: table => new
-                {
-                    SoPN = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    MaNCC = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    MaNV = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    NgayNhap = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TongTienNhap = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    NhapHang = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    GhiChuPN = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PNHAP", x => x.SoPN);
-                    table.ForeignKey(
-                        name: "FK_PNHAP_NCC_MaNCC",
-                        column: x => x.MaNCC,
-                        principalTable: "NCC",
-                        principalColumn: "MaNCC");
-                    table.ForeignKey(
-                        name: "FK_PNHAP_NHANVIEN_MaNV",
-                        column: x => x.MaNV,
-                        principalTable: "NHANVIEN",
-                        principalColumn: "MaNV");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TAIKHOAN",
                 columns: table => new
                 {
@@ -401,31 +328,6 @@ namespace WebCoffee.BackendServer.Migrations
                         principalTable: "PHANQUYEN",
                         principalColumn: "MaPQ",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CONGTHUC",
-                columns: table => new
-                {
-                    MaCT = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    MaSP = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    MaNL = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    SoLuongNL = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    GhiChuCT = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CONGTHUC", x => x.MaCT);
-                    table.ForeignKey(
-                        name: "FK_CONGTHUC_NGUYENLIEU_MaNL",
-                        column: x => x.MaNL,
-                        principalTable: "NGUYENLIEU",
-                        principalColumn: "MaNL");
-                    table.ForeignKey(
-                        name: "FK_CONGTHUC_SANPHAM_MaSP",
-                        column: x => x.MaSP,
-                        principalTable: "SANPHAM",
-                        principalColumn: "MaSP");
                 });
 
             migrationBuilder.CreateTable(
@@ -462,7 +364,8 @@ namespace WebCoffee.BackendServer.Migrations
                     SLSP = table.Column<int>(type: "int", nullable: true),
                     DonGia = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     GiamGia = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    ThanhTien = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    ThanhTien = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    GiaVon = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -501,56 +404,44 @@ namespace WebCoffee.BackendServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CTPHIEUNHAP_NL",
+                name: "REFRESHTOKEN",
                 columns: table => new
                 {
-                    SoCTPNNL = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    SoPNNL = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    MaNL = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    SLNhapNL = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    DonGiaNhapNL = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    ThanhTienNhapNL = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TenDangNhap = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CTPHIEUNHAP_NL", x => x.SoCTPNNL);
+                    table.PrimaryKey("PK_REFRESHTOKEN", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CTPHIEUNHAP_NL_NGUYENLIEU_MaNL",
-                        column: x => x.MaNL,
-                        principalTable: "NGUYENLIEU",
-                        principalColumn: "MaNL");
-                    table.ForeignKey(
-                        name: "FK_CTPHIEUNHAP_NL_PHIEUNHAP_NL_SoPNNL",
-                        column: x => x.SoPNNL,
-                        principalTable: "PHIEUNHAP_NL",
-                        principalColumn: "SoPNNL");
+                        name: "FK_REFRESHTOKEN_TAIKHOAN_TenDangNhap",
+                        column: x => x.TenDangNhap,
+                        principalTable: "TAIKHOAN",
+                        principalColumn: "TenDangNhap",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "CTPNHAP",
-                columns: table => new
+            migrationBuilder.InsertData(
+                table: "CALAM",
+                columns: new[] { "MaCaLam", "TenCa", "TgRaCa", "TgVaoCa" },
+                values: new object[,]
                 {
-                    SoCTPN = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    SoPN = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    MaSP = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    SLN = table.Column<int>(type: "int", nullable: true),
-                    DonGiaNhap = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    ThanhTienNhap = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    GhiChuCTPN = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
+                    { "CA01", "Ca sáng", "14:00:00", "06:00:00" },
+                    { "CA02", "Ca tối", "22:00:00", "14:00:00" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "KH",
+                columns: new[] { "MaKH", "DiemTichLuy", "GhiChuKH", "NgayTao", "SDTKH", "TenKH" },
+                values: new object[,]
                 {
-                    table.PrimaryKey("PK_CTPNHAP", x => x.SoCTPN);
-                    table.ForeignKey(
-                        name: "FK_CTPNHAP_PNHAP_SoPN",
-                        column: x => x.SoPN,
-                        principalTable: "PNHAP",
-                        principalColumn: "SoPN");
-                    table.ForeignKey(
-                        name: "FK_CTPNHAP_SANPHAM_MaSP",
-                        column: x => x.MaSP,
-                        principalTable: "SANPHAM",
-                        principalColumn: "MaSP");
+                    { "KH01", 0, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "0000000000", "Khách Lẻ" },
+                    { "KH02", 150, null, new DateTime(2024, 5, 23, 8, 0, 0, 0, DateTimeKind.Unspecified), "0901234567", "Nguyễn Anh Tú" }
                 });
 
             migrationBuilder.InsertData(
@@ -583,15 +474,6 @@ namespace WebCoffee.BackendServer.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "NGUYENLIEU",
-                columns: new[] { "MaNL", "DVTNL", "DonGiaNL", "GhiChuNL", "HanSuDung", "MucCanhBao", "SoLuongTon", "TenNL", "TrangThaiNL" },
-                values: new object[,]
-                {
-                    { "NL01", "Kg", 150000m, null, null, null, 10m, "Hạt Cà Phê Robusta", null },
-                    { "NL02", "Lon", 25000m, null, null, null, 20m, "Sữa Đặc", null }
-                });
-
-            migrationBuilder.InsertData(
                 table: "PHANQUYEN",
                 columns: new[] { "MaPQ", "MoTaPQ", "TenPQ" },
                 values: new object[,]
@@ -616,17 +498,18 @@ namespace WebCoffee.BackendServer.Migrations
                 values: new object[,]
                 {
                     { "NV01", null, null, null, null, "Nguyễn Văn", "LNV01", null, true, null, null, null, null, null, "An", null, "Đang làm", null },
-                    { "NV02", null, null, null, null, "Trần Thị", "LNV02", null, false, null, null, null, null, null, "Bình", null, "Đang làm", null }
+                    { "NV02", null, null, null, null, "Trần Thị", "LNV02", null, false, null, null, null, null, null, "Bình", null, "Đang làm", null },
+                    { "NV230158", null, null, null, null, "Nguyễn Văn", "LNV02", null, false, null, null, null, null, null, "Kha", null, "Đang làm", null }
                 });
 
             migrationBuilder.InsertData(
                 table: "SANPHAM",
-                columns: new[] { "MaSP", "DVT", "DonGia", "HinhAnh", "KichThuoc", "MaLoaiSP", "MoTa", "TenSP", "TrangThaiSP" },
+                columns: new[] { "MaSP", "DVT", "DonGia", "GiaVon", "HinhAnh", "KichThuoc", "MaLoaiSP", "MoTa", "TenSP", "TrangThaiSP" },
                 values: new object[,]
                 {
-                    { "SP01", "Ly", 25000m, null, null, "LSP01", null, "Cà phê đen đá", "Đang bán" },
-                    { "SP02", "Ly", 30000m, null, null, "LSP01", null, "Bạc xỉu", "Đang bán" },
-                    { "SP03", "Ly", 45000m, null, null, "LSP02", null, "Trà đào cam sả", "Đang bán" }
+                    { "SP01", "Ly", 25000m, 8000m, null, null, "LSP01", null, "Cà phê đen đá", "Đang bán" },
+                    { "SP02", "Ly", 30000m, 12000m, null, null, "LSP01", null, "Bạc xỉu", "Đang bán" },
+                    { "SP03", "Ly", 45000m, 15000m, null, null, "LSP02", null, "Trà đào cam sả", "Đang bán" }
                 });
 
             migrationBuilder.InsertData(
@@ -634,8 +517,8 @@ namespace WebCoffee.BackendServer.Migrations
                 columns: new[] { "TenDangNhap", "LanDangNhapCuoi", "MaNV", "MaPQ", "MatKhau", "TrangThaiTK" },
                 values: new object[,]
                 {
-                    { "admin", null, "NV01", "PQ01", "123456", "Hoạt động" },
-                    { "nhanvien1", null, "NV02", "PQ02", "123456", "Hoạt động" }
+                    { "admin", null, "NV01", "PQ01", "$2a$12$Ni4r2Ts3e0aM8IS4GEk3/uS.TlZ2jSVhgiZOuKAR0XyzfjDL0Ts.y", "Hoạt động" },
+                    { "nhanvien1", null, "NV02", "PQ02", "$2a$12$Ni4r2Ts3e0aM8IS4GEk3/uS.TlZ2jSVhgiZOuKAR0XyzfjDL0Ts.y", "Hoạt động" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -644,14 +527,14 @@ namespace WebCoffee.BackendServer.Migrations
                 column: "SoKV");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CONGTHUC_MaNL",
-                table: "CONGTHUC",
-                column: "MaNL");
+                name: "IX_CHAMCONG_MaCaLam",
+                table: "CHAMCONG",
+                column: "MaCaLam");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CONGTHUC_MaSP",
-                table: "CONGTHUC",
-                column: "MaSP");
+                name: "IX_CHAMCONG_MaNV",
+                table: "CHAMCONG",
+                column: "MaNV");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CTHD_MaSP",
@@ -662,26 +545,6 @@ namespace WebCoffee.BackendServer.Migrations
                 name: "IX_CTHD_SoHD",
                 table: "CTHD",
                 column: "SoHD");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CTPHIEUNHAP_NL_MaNL",
-                table: "CTPHIEUNHAP_NL",
-                column: "MaNL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CTPHIEUNHAP_NL_SoPNNL",
-                table: "CTPHIEUNHAP_NL",
-                column: "SoPNNL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CTPNHAP_MaSP",
-                table: "CTPNHAP",
-                column: "MaSP");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CTPNHAP_SoPN",
-                table: "CTPNHAP",
-                column: "SoPN");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DATBAN_MaKH",
@@ -714,39 +577,14 @@ namespace WebCoffee.BackendServer.Migrations
                 column: "SoBan");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LICHSU_KHO_MaNL",
-                table: "LICHSU_KHO",
-                column: "MaNL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LICHSU_KHO_NguoiThucHien",
-                table: "LICHSU_KHO",
-                column: "NguoiThucHien");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_NHANVIEN_MaLoaiNV",
                 table: "NHANVIEN",
                 column: "MaLoaiNV");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PHIEUNHAP_NL_MaNCC",
-                table: "PHIEUNHAP_NL",
-                column: "MaNCC");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PHIEUNHAP_NL_MaNV",
-                table: "PHIEUNHAP_NL",
-                column: "MaNV");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PNHAP_MaNCC",
-                table: "PNHAP",
-                column: "MaNCC");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PNHAP_MaNV",
-                table: "PNHAP",
-                column: "MaNV");
+                name: "IX_REFRESHTOKEN_TenDangNhap",
+                table: "REFRESHTOKEN",
+                column: "TenDangNhap");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SANPHAM_MaLoaiSP",
@@ -779,40 +617,28 @@ namespace WebCoffee.BackendServer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CONGTHUC");
+                name: "CHAMCONG");
 
             migrationBuilder.DropTable(
                 name: "CTHD");
 
             migrationBuilder.DropTable(
-                name: "CTPHIEUNHAP_NL");
-
-            migrationBuilder.DropTable(
-                name: "CTPNHAP");
-
-            migrationBuilder.DropTable(
                 name: "DATBAN");
 
             migrationBuilder.DropTable(
-                name: "LICHSU_KHO");
+                name: "REFRESHTOKEN");
 
             migrationBuilder.DropTable(
                 name: "SANPHAM_KHUYENMAI");
 
             migrationBuilder.DropTable(
-                name: "TAIKHOAN");
-
-            migrationBuilder.DropTable(
                 name: "THANHTOAN");
 
             migrationBuilder.DropTable(
-                name: "PHIEUNHAP_NL");
+                name: "CALAM");
 
             migrationBuilder.DropTable(
-                name: "PNHAP");
-
-            migrationBuilder.DropTable(
-                name: "NGUYENLIEU");
+                name: "TAIKHOAN");
 
             migrationBuilder.DropTable(
                 name: "KHUYENMAI");
@@ -821,13 +647,10 @@ namespace WebCoffee.BackendServer.Migrations
                 name: "SANPHAM");
 
             migrationBuilder.DropTable(
-                name: "PHANQUYEN");
-
-            migrationBuilder.DropTable(
                 name: "HOADON");
 
             migrationBuilder.DropTable(
-                name: "NCC");
+                name: "PHANQUYEN");
 
             migrationBuilder.DropTable(
                 name: "LOAISP");

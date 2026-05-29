@@ -104,5 +104,21 @@ namespace WebCoffee.BackendServer.Controllers
 
             return Ok(new { success = true, message = "Đổi mật khẩu thành công. Tất cả các thiết bị đã bị đăng xuất, vui lòng đăng nhập lại!" });
         }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] DangKyRequest request)
+        {
+            try
+            {
+                var ketQua = await _authService.DangKyTaiKhoanAsync(request);
+                if (!ketQua) return BadRequest(ApiResponse.ErrorResult("Tên đăng nhập đã có người sử dụng."));
+
+                return Ok(ApiResponse.SuccessResult("Tạo tài khoản hệ thống thành công!"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse.ErrorResult(ex.Message));
+            }
+        }
     }
 }

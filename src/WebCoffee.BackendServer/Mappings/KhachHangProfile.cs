@@ -13,6 +13,7 @@ namespace WebCoffee.BackendServer.Mappings
             CreateMap<KhachHangCreateRequest, KhachHang>();
 
             CreateMap<KhachHangUpdateRequest, KhachHang>()
+                .ForMember(dest => dest.NgayTao, opt => opt.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }

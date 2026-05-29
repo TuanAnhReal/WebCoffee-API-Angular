@@ -5,8 +5,10 @@ PROJECT STRUCTURE
     |-- WebCoffee.BackendServer
         |-- Controllers
             |-- AuthController.cs
+            |-- DashboardController.cs
             |-- HoaDonsController.cs
             |-- KhachHangsController.cs
+            |-- KhuVucBansController.cs
             |-- LoaiNVsController.cs
             |-- LoaiSPsController.cs
             |-- NhanViensController.cs
@@ -35,11 +37,14 @@ PROJECT STRUCTURE
         |-- Extensions
             |-- ServiceExtensions.cs
         |-- Helpers
+            |-- CloudinarySettings.cs
             |-- CurrentUserService.cs
             |-- ICurrentUserService.cs
         |-- Logs
             |-- log-20260522.txt
             |-- log-20260523.txt
+            |-- log-20260524.txt
+            |-- log-20260525.txt
         |-- Mappings
             |-- HoaDonProfile.cs
             |-- KhachHangProfile.cs
@@ -59,6 +64,10 @@ PROJECT STRUCTURE
             |-- 20260519174019_Database_v2.Designer.cs
             |-- 20260520180355_AddRefreshToken.cs
             |-- 20260520180355_AddRefreshToken.Designer.cs
+            |-- 20260523115553_Seed_Data.cs
+            |-- 20260523115553_Seed_Data.Designer.cs
+            |-- 20260524174245_InitFresh.cs
+            |-- 20260524174245_InitFresh.Designer.cs
             |-- AppDbContextModelSnapshot.cs
         |-- Properties
             |-- launchSettings.json
@@ -70,12 +79,18 @@ PROJECT STRUCTURE
                 |-- TokenService.cs
             |-- BackgroundJobs
                 |-- TokenCleanupService.cs
+            |-- Dashboard
+                |-- DashboardService.cs
+                |-- IDashboardService.cs
             |-- HoaDons
                 |-- HoaDonService.cs
                 |-- IHoaDonService.cs
             |-- KhachHangs
                 |-- IKhachHangService.cs
                 |-- KhachHangService.cs
+            |-- KhuVucBans
+                |-- IKhuVucBanService.cs
+                |-- KhuVucBanService.cs
             |-- LoaiNVs
                 |-- ILoaiNVService.cs
                 |-- LoaiNVService.cs
@@ -91,6 +106,9 @@ PROJECT STRUCTURE
             |-- SanPhams
                 |-- ISanPhamService.cs
                 |-- SanPhamService.cs
+            |-- Storage
+                |-- CloudinaryStorageService.cs
+                |-- IStorageService.cs
             |-- TaiKhoans
                 |-- ITaiKhoanService.cs
                 |-- TaiKhoanService.cs
@@ -127,6 +145,8 @@ PROJECT STRUCTURE
         |-- WebCoffee.BackendServer.http
     |-- WebCoffee.ViewModels
         |-- Catalog
+            |-- Dashboard
+                |-- DashboardVm.cs
             |-- HoaDons
                 |-- CTHDCreateRequest.cs
                 |-- CTHDVm.cs
@@ -137,6 +157,13 @@ PROJECT STRUCTURE
                 |-- KhachHangCreateRequest.cs
                 |-- KhachHangUpdateRequest.cs
                 |-- KhachHangVm.cs
+            |-- KhuVucBans
+                |-- BanCreateRequest.cs
+                |-- BanUpdateRequest.cs
+                |-- BanVm.cs
+                |-- KhuVucCreateRequest.cs
+                |-- KhuVucUpdateRequest.cs
+                |-- KhuVucVm.cs
             |-- LoaiNVs
                 |-- LoaiNVCreateRequest.cs
                 |-- LoaiNVUpdateRequest.cs
@@ -205,13 +232,19 @@ PROJECT STRUCTURE
                             |-- login.component.ts
                 |-- dashboard
                     |-- pages
-                        |-- dashboard
-                            |-- dashboard.component.html
-                            |-- dashboard.component.scss
-                            |-- dashboard.component.ts
-                    |-- dashboard.routes.ts
+                        |-- dashboard.component.html
+                        |-- dashboard.component.scss
+                        |-- dashboard.component.ts
+                    |-- routes
+                        |-- dashboard.routes.ts
+                    |-- service
+                        |-- dashboard.service.ts
                 |-- hoa-don
                     |-- pages
+                        |-- hoa-don-create
+                            |-- hoa-don-create.component.html
+                            |-- hoa-don-create.component.scss
+                            |-- hoa-don-create.component.ts
                         |-- hoa-don-detail
                             |-- hoa-don-detail.component.html
                             |-- hoa-don-detail.component.scss
@@ -220,7 +253,10 @@ PROJECT STRUCTURE
                             |-- hoa-don-list.component.html
                             |-- hoa-don-list.component.scss
                             |-- hoa-don-list.component.ts
-                    |-- hoa-don.routes.ts
+                    |-- routes
+                        |-- hoa-don.routes.ts
+                    |-- services
+                        |-- hoa-don.service.ts
                 |-- khach-hang
                     |-- pages
                         |-- khach-hang-list
@@ -228,6 +264,15 @@ PROJECT STRUCTURE
                             |-- khach-hang-list.component.scss
                             |-- khach-hang-list.component.ts
                     |-- khach-hang.routes.ts
+                |-- khuvuc-ban
+                    |-- pages
+                        |-- khu-vuc-ban-list.component.html
+                        |-- khu-vuc-ban-list.component.scss
+                        |-- khu-vuc-ban-list.component.ts
+                    |-- routes
+                        |-- khu-vuc-ban.routes.ts
+                    |-- services
+                        |-- khu-vuc-ban.service.ts
                 |-- nhan-vien
                     |-- pages
                         |-- nhan-vien-create
@@ -238,7 +283,14 @@ PROJECT STRUCTURE
                             |-- nhan-vien-list.component.html
                             |-- nhan-vien-list.component.scss
                             |-- nhan-vien-list.component.ts
-                    |-- nhan-vien.routes.ts
+                        |-- nhan-vien-update
+                            |-- nhan-vien-update.component.html
+                            |-- nhan-vien-update.component.scss
+                            |-- nhan-vien-update.component.ts
+                    |-- routes
+                        |-- nhan-vien.routes.ts
+                    |-- services
+                        |-- nhan-vien.service.ts
                 |-- san-pham
                     |-- pages
                         |-- san-pham-create
@@ -248,9 +300,15 @@ PROJECT STRUCTURE
                         |-- san-pham-list
                             |-- san-pham-list.component.html
                             |-- san-pham-list.component.scss
-                            |-- san-pham-list.component.spec.ts
                             |-- san-pham-list.component.ts
-                    |-- san-pham.routes.ts
+                        |-- san-pham-update
+                            |-- san-pham-update.component.html
+                            |-- san-pham-update.component.scss
+                            |-- san-pham-update.component.ts
+                    |-- routes
+                        |-- san-pham.routes.ts
+                    |-- services
+                        |-- san-pham.service.ts
             |-- layouts
                 |-- admin-layout
                     |-- admin-layout.component.html
@@ -298,7 +356,6 @@ PROJECT STRUCTURE
     |-- tsconfig.json
     |-- tsconfig.spec.json
 |-- generate-structure.ps1
-|-- generate-structure.ps1.txt
 |-- README.md
 |-- structure.txt
 |-- WebCoffee.sln

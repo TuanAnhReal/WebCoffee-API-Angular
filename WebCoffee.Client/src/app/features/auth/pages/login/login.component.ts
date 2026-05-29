@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +14,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    RouterModule,
     MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatSnackBarModule
   ],
   templateUrl: './login.component.html',
@@ -35,39 +36,55 @@ export class LoginComponent {
   });
 
   onSubmit(): void {
+    if (this.loginForm.invalid || this.isLoading) {
+      return;
+    }
 
-  if (this.loginForm.invalid || this.isLoading) {
-    return;
+    this.isLoading = true;
+
+    this.authService
+      .login(this.loginForm.getRawValue())
+      .subscribe({
+        next: () => {
+          queueMicrotask(() => {
+            this.isLoading = false;
+
+            // 1. Kiểm tra xem người dùng có bị chặn bởi Guard trước đó không (để quay lại link cũ)
+            const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+            
+            if (returnUrl) {
+              this.router.navigateByUrl(returnUrl);
+              return;
+            }
+
+            // 2. Nếu đăng nhập chủ động từ trang /login -> Điều hướng thông minh dựa vào Vai trò (Role)
+            const vaiTro = this.authService.currentRole();
+            console.log('🔑 [Login] Tài khoản đăng nhập thành công. Vai trò nhận diện:', vaiTro);
+
+            let urlDieuHuong = '/admin/profile'; // URL phòng hờ nếu role lạ
+
+            if (vaiTro === 'Quản trị viên') {
+              urlDieuHuong = '/admin/dashboard';
+            } else if (vaiTro === 'Phục vụ') {
+              urlDieuHuong = '/admin/hoa-don';
+            } else if (vaiTro === 'Pha chế') {
+              urlDieuHuong = '/admin/bep-pha-che';
+            }
+
+            // Thực thi đẩy user sang phân hệ phù hợp
+            this.router.navigateByUrl(urlDieuHuong);
+          });
+        },
+        error: (err) => {
+          queueMicrotask(() => {
+            this.isLoading = false;
+            this.snackBar.open(err.error?.message || 'Tài khoản hoặc mật khẩu không chính xác!', 'Đóng', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top'
+            });
+          });
+        }
+      });
   }
-
-  this.isLoading = true;
-
-  this.authService
-    .login(this.loginForm.getRawValue())
-    .subscribe({
-
-      next: () => {
-        queueMicrotask(() => {
-
-          this.isLoading = false;
-
-          const returnUrl =
-            this.route.snapshot.queryParams['returnUrl']
-            || '/admin/dashboard';
-
-          this.router.navigateByUrl(returnUrl);
-
-        });
-      },
-
-      error: () => {
-
-        queueMicrotask(() => {
-
-          this.isLoading = false;
-
-        });
-      }
-    });
-}
 }

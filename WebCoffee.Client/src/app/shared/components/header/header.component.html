@@ -18,7 +18,9 @@
     <div class="h-8 w-[1px] bg-outline-variant"></div>
 
     <div class="flex items-center gap-8">
-      <app-avatar [name]="displayName" size="md" />
+      <a routerLink="/admin/profile" class="cursor-pointer hover:opacity-80 transition-opacity flex items-center" title="Xem thông tin tài khoản">
+        <app-avatar [name]="displayName" size="md" />
+      </a>
 
       <button (click)="logout()"
         class="flex items-center gap-2 bg-error text-on-error px-4 py-2 rounded-lg hover:bg-opacity-90 active:scale-95 transition-all font-body-sm font-semibold">

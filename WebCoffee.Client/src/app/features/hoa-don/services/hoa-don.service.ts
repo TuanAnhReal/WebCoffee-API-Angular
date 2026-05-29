@@ -47,8 +47,8 @@ export class HoaDonService {
     return this.http.get<ApiResponse<HoaDonVm[]>>(this.apiUrl);
   }
 
-  getById(soHd: string): Observable<ApiResponse<HoaDonVm>> {
-    return this.http.get<ApiResponse<HoaDonVm>>(`${this.apiUrl}/${soHd}`);
+  getById(soHD: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${soHD}`);
   }
 
   create(data: any): Observable<ApiResponse<any>> {
@@ -57,5 +57,12 @@ export class HoaDonService {
 
   update(soHd: string, data: any): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`${this.apiUrl}/${soHd}`, data);
+  }
+
+  // Cập nhật trạng thái hóa đơn
+  updateStatus(soHD: string, newStatus: string): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/${soHD}/status`, `"${newStatus}"`, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }

@@ -12,5 +12,9 @@ export const NHAN_VIEN_ROUTES: Routes = [
   {
     path: 'update/:id', 
     loadComponent: () => import('../pages/nhan-vien-update/nhan-vien-update.component').then(c => c.NhanVienUpdateComponent)
+  },
+  {
+    path: 'ca-lam-viec',
+    loadComponent: () => import('../pages/nhan-vien-calam/pages/ca-lam.component').then(c => c.CaLamComponent)
   }
 ];

@@ -2,28 +2,27 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
         <div>
             <h2 class="font-display-lg text-display-lg text-on-surface mb-1">Danh sách Khách hàng</h2>
-            <p class="font-body-md text-body-md text-on-surface-variant">Quản lý thông tin chi tiết và lịch sử khách hàng doanh nghiệp.</p>
         </div>
         <div class="flex gap-3 w-full sm:w-auto">
-            <button class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-surface-container-lowest border border-outline-variant px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors shadow-sm active:scale-95">
-                <span class="material-symbols-outlined text-sm">filter_list</span>
-                <span class="font-body-sm text-body-sm font-semibold">Bộ lọc</span>
-            </button>
-            <button routerLink="/admin/khach-hang/create" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-primary text-on-primary px-5 py-2.5 rounded-lg hover:brightness-110 transition-all shadow-md active:scale-95">
+            <div class="relative flex-1 sm:w-64">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                <input [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" type="text" class="w-full pl-9 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm" placeholder="Tìm tên, SĐT, mã KH...">
+            </div>
+            <button routerLink="/admin/khach-hang/create" class="flex items-center justify-center gap-2 bg-primary text-on-primary px-5 py-2 rounded-lg hover:brightness-110 transition-all shadow-md active:scale-95 whitespace-nowrap">
                 <span class="material-symbols-outlined">person_add</span>
-                <span class="font-body-sm text-body-sm font-semibold">Thêm khách hàng</span>
+                <span class="font-body-sm text-body-sm font-semibold hidden sm:inline">Thêm mới</span>
             </button>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-        <div class="md:col-span-8 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant card-shadow flex items-center justify-between">
+        <div class="md:col-span-8 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex items-center justify-between">
             <div>
-                <p class="font-label-caps text-label-caps text-on-surface-variant opacity-60 mb-2">TỔNG KHÁCH HÀNG</p>
-                <h3 class="text-4xl font-bold text-primary">1,284</h3>
+                <p class="font-label-caps text-label-caps text-on-surface-variant opacity-60 mb-2">TỔNG KHÁCH HÀNG (HỆ THỐNG)</p>
+                <h3 class="text-4xl font-bold text-primary">{{ totalCustomers | number }}</h3>
                 <div class="flex items-center gap-1 mt-2 text-green-600">
                     <span class="material-symbols-outlined text-sm">trending_up</span>
-                    <span class="text-xs font-semibold">+12% so với tháng trước</span>
+                    <span class="text-xs font-semibold">+{{ newCustomersThisMonth }} khách hàng đăng ký trong tháng này</span>
                 </div>
             </div>
             <div class="h-16 w-32 bg-primary bg-opacity-5 rounded-lg flex items-end justify-around px-2 pb-1 gap-1">
@@ -31,117 +30,106 @@
                 <div class="bg-primary bg-opacity-20 w-3 h-[60%] rounded-t-sm"></div>
                 <div class="bg-primary bg-opacity-40 w-3 h-[50%] rounded-t-sm"></div>
                 <div class="bg-primary bg-opacity-60 w-3 h-[80%] rounded-t-sm"></div>
-                <div class="bg-primary w-3 h-[100%] rounded-t-sm"></div>
+                <div class="bg-primary w-3 h-[100%] rounded-t-sm" title="Khách mới hôm nay"></div>
             </div>
         </div>
         
         <div class="md:col-span-4 bg-primary-container text-on-primary-container p-6 rounded-xl border border-primary shadow-lg flex flex-col justify-between">
             <div class="flex justify-between items-start">
-                <p class="font-label-caps text-label-caps opacity-80 uppercase">Khách hàng VIP</p>
+                <p class="font-label-caps text-label-caps opacity-80 uppercase">Khách hàng VIP (>500 pts)</p>
                 <span class="material-symbols-outlined font-variation-fill">grade</span>
             </div>
             <div class="mt-4">
-                <h3 class="text-3xl font-bold">152</h3>
-                <p class="text-xs opacity-70 mt-1">Chiếm 11.8% tổng số lượng</p>
+                <h3 class="text-3xl font-bold">{{ vipCustomersCount | number }}</h3>
+                <p class="text-xs opacity-70 mt-1">Chiếm {{ totalCustomers ? ((vipCustomersCount/totalCustomers)*100).toFixed(1) : 0 }}% tổng số lượng</p>
             </div>
         </div>
     </div>
 
-    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden min-h-[300px]">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse whitespace-nowrap">
-                <thead>
-                    <tr class="bg-surface-container-low border-b border-outline-variant">
-                        <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase cursor-pointer hover:bg-surface-container-high transition-colors">Mã KH</th>
-                        <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase cursor-pointer hover:bg-surface-container-high transition-colors">Họ và Tên</th>
-                        <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase cursor-pointer hover:bg-surface-container-high transition-colors">Số điện thoại</th>
-                        <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase cursor-pointer hover:bg-surface-container-high transition-colors">Điểm tích lũy</th>
-                        <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Ghi chú</th>
-                        <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase text-right">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-outline-variant">
-                    
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-6 py-4 font-body-sm text-body-sm text-primary font-semibold">KH-00124</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary font-bold text-xs">NL</div>
-                                <span class="font-body-md text-body-md font-semibold text-on-surface">Nguyễn Văn Lộc</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">090 123 4567</td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
-                                1,250 pts
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant max-w-[200px] truncate" title="Khách hàng thân thiết, ưu tiên hỗ trợ nhanh.">
-                            Khách hàng thân thiết, ưu tiên hỗ trợ nhanh.
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="p-2 hover:bg-primary-container hover:bg-opacity-20 hover:text-primary rounded-lg text-on-surface-variant opacity-0 group-hover:opacity-100 transition-all">
-                                <span class="material-symbols-outlined text-sm">edit</span>
-                            </button>
-                            <button class="p-2 hover:bg-error hover:bg-opacity-10 hover:text-error rounded-lg text-on-surface-variant opacity-0 group-hover:opacity-100 transition-all">
-                                <span class="material-symbols-outlined text-sm">delete</span>
-                            </button>
-                        </td>
-                    </tr>
-
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-6 py-4 font-body-sm text-body-sm text-primary font-semibold">KH-00125</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary font-bold text-xs">TH</div>
-                                <span class="font-body-md text-body-md font-semibold text-on-surface">Trần Thị Hoa</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">091 987 6543</td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-                                840 pts
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant max-w-[200px] truncate" title="Thanh toán qua chuyển khoản ngân hàng.">
-                            Thanh toán qua chuyển khoản ngân hàng.
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="p-2 hover:bg-primary-container hover:bg-opacity-20 hover:text-primary rounded-lg text-on-surface-variant opacity-0 group-hover:opacity-100 transition-all">
-                                <span class="material-symbols-outlined text-sm">edit</span>
-                            </button>
-                            <button class="p-2 hover:bg-error hover:bg-opacity-10 hover:text-error rounded-lg text-on-surface-variant opacity-0 group-hover:opacity-100 transition-all">
-                                <span class="material-symbols-outlined text-sm">delete</span>
-                            </button>
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
+            @if (isLoading) {
+                <div class="flex justify-center items-center py-20">
+                    <span class="material-symbols-outlined animate-spin text-[40px] text-primary">progress_activity</span>
+                </div>
+            } @else {
+                <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr class="bg-surface-container-low border-b border-outline-variant">
+                            <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Mã KH</th>
+                            <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Họ và Tên</th>
+                            <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Số điện thoại</th>
+                            <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Điểm tích lũy</th>
+                            <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Ngày tham gia</th>
+                            <th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase text-right">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant">
+                        @for (cus of paginatedCustomers; track cus.maKH) {
+                            <tr class="hover:bg-surface-container-low transition-colors group">
+                                <td class="px-6 py-4 font-body-sm text-body-sm text-primary font-semibold">{{ cus.maKH }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+                                             [ngClass]="cus.tenKH?.length! % 2 === 0 ? 'bg-secondary-container text-primary' : 'bg-tertiary-fixed text-tertiary'">
+                                            {{ getAvatarInitials(cus.tenKH) }}
+                                        </div>
+                                        <span class="font-body-md text-body-md font-semibold text-on-surface">{{ cus.tenKH || 'Chưa cập nhật' }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">{{ cus.sdtkh || '---' }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold"
+                                          [ngClass]="cus.diemTichLuy >= 500 ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'">
+                                        <span *ngIf="cus.diemTichLuy >= 500" class="material-symbols-outlined text-[12px] mr-1 font-variation-fill">grade</span>
+                                        {{ cus.diemTichLuy | number }} pts
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">
+                                    {{ (cus.ngayTao | date:'dd/MM/yyyy') || '---' }}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button [routerLink]="['/admin/khach-hang/update', cus.maKH]" class="p-2 hover:bg-primary-container hover:bg-opacity-20 hover:text-primary rounded-lg text-on-surface-variant opacity-0 group-hover:opacity-100 transition-all" title="Chỉnh sửa">
+                                        <span class="material-symbols-outlined text-sm">edit</span>
+                                    </button>
+                                    <button (click)="deleteCustomer(cus)" class="p-2 hover:bg-error hover:bg-opacity-10 hover:text-error rounded-lg text-on-surface-variant opacity-0 group-hover:opacity-100 transition-all" title="Xóa">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        
+                        @if (paginatedCustomers.length === 0) {
+                            <tr>
+                                <td colspan="6" class="text-center py-8 text-on-surface-variant">Không tìm thấy khách hàng nào.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
         </div>
 
-        <div class="bg-surface-container-low px-6 py-4 border-t border-outline-variant flex items-center justify-between">
-            <p class="font-body-sm text-body-sm text-on-surface-variant">Hiển thị 1 - 10 trong tổng số 1,284 khách hàng</p>
+        <div class="bg-surface-container-low px-6 py-4 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="font-body-sm text-body-sm text-on-surface-variant">
+                Hiển thị {{ filteredCustomers.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }} - 
+                {{ math.min(currentPage * itemsPerPage, filteredCustomers.length) }} trong tổng số {{ filteredCustomers.length }} khách hàng
+            </p>
             <div class="flex items-center gap-2">
-                <button class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container-high disabled:opacity-30" disabled>
+                <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container-high disabled:opacity-30 transition-colors">
                     <span class="material-symbols-outlined text-sm">chevron_left</span>
                 </button>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold text-xs shadow-sm">1</button>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-transparent hover:border-outline-variant font-semibold text-xs transition-colors">2</button>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-transparent hover:border-outline-variant font-semibold text-xs transition-colors">3</button>
-                <span class="px-1 text-on-surface-variant opacity-50">...</span>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-transparent hover:border-outline-variant font-semibold text-xs transition-colors">128</button>
-                <button class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container-high">
+                
+                @for (page of getPagesArray(); track page) {
+                    <button (click)="changePage(page)" class="w-8 h-8 flex items-center justify-center rounded-lg border transition-colors text-xs font-semibold"
+                            [ngClass]="page === currentPage ? 'bg-primary text-on-primary border-primary shadow-sm' : 'border-transparent hover:border-outline-variant text-on-surface'">
+                        {{ page }}
+                    </button>
+                }
+
+                <button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)" class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container-high disabled:opacity-30 transition-colors">
                     <span class="material-symbols-outlined text-sm">chevron_right</span>
                 </button>
             </div>
-        </div>
-    </div>
-
-    <div class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center cursor-pointer active:scale-90 transition-transform group z-50">
-        <span class="material-symbols-outlined">support_agent</span>
-        <div class="absolute right-full mr-4 px-3 py-2 bg-inverse-surface text-inverse-on-surface text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-            Hỗ trợ kỹ thuật nhanh
         </div>
     </div>
 </div>

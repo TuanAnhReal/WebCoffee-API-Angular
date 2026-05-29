@@ -20,6 +20,7 @@ namespace WebCoffee.BackendServer.Services.HoaDons
         public async Task<List<HoaDonVm>> GetAllAsync()
         {
             var entities = await _context.HoaDons
+                .Include(x => x.CTHDs)
                 .OrderByDescending(x => x.TGVao)
                 .ToListAsync();
             return _mapper.Map<List<HoaDonVm>>(entities);
@@ -58,6 +59,17 @@ namespace WebCoffee.BackendServer.Services.HoaDons
             _context.HoaDons.Add(hd);
             await _context.SaveChangesAsync();
 
+            if (!string.IsNullOrEmpty(request.SoBan) && request.SoBan != "Mang đi")
+            {
+                var ban = await _context.Bans.FindAsync(request.SoBan);
+                if (ban != null && ban.TrangThaiBan == "Trống")
+                {
+                    ban.TrangThaiBan = "Đang phục vụ";
+                    _context.Bans.Update(ban);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
             return _mapper.Map<HoaDonVm>(hd);
         }
 
@@ -67,6 +79,48 @@ namespace WebCoffee.BackendServer.Services.HoaDons
             if (hd == null) return false;
 
             _mapper.Map(request, hd);
+
+            _context.HoaDons.Update(hd);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> UpdateStatusAsync(string soHd, string newStatus)
+        {
+            var hd = await _context.HoaDons.FindAsync(soHd);
+            if (hd == null) return false;
+            hd.TrangThaiHD = newStatus;
+
+            if (newStatus == "Đã thanh toán" || newStatus == "Đã hủy")
+            {
+                hd.TGRa = DateTime.Now;
+
+                if (!string.IsNullOrEmpty(hd.SoBan) && hd.SoBan != "Mang đi")
+                {
+                    var ban = await _context.Bans.FindAsync(hd.SoBan);
+                    if (ban != null)
+                    {
+                        ban.TrangThaiBan = "Trống";
+                        _context.Bans.Update(ban);
+                    }
+                }
+            }
+
+            _context.HoaDons.Update(hd);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> CompleteKitchenOrderAsync(string soHd, KitchenUpdateDto dto)
+        {
+            var hd = await _context.HoaDons.FindAsync(soHd);
+            if (hd == null) return false;
+
+            // Cập nhật trạng thái theo yêu cầu của bếp (thường là "Hoàn thành")
+            hd.TrangThaiHD = dto.TrangThaiHD;
+
+            // Gán mã nhân viên pha chế thực hiện đơn này
+            hd.MaNV_PC = dto.MaNV_PC;
 
             _context.HoaDons.Update(hd);
             var result = await _context.SaveChangesAsync();

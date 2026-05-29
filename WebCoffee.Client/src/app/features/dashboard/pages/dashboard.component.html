@@ -1,7 +1,6 @@
 <div class="pb-8">
   <header class="mb-8">
     <h2 class="font-display-lg text-display-lg text-on-surface">Tổng quan hệ thống</h2>
-    <p class="text-on-surface-variant mt-1">Chào mừng trở lại! Dưới đây là báo cáo hoạt động mới nhất của hôm nay.</p>
   </header>
 
   <!-- Thống kê tổng quan -->
@@ -89,14 +88,13 @@
   </div>
   }
 
-  <!-- ✅ Bảng giao dịch + Thao tác nhanh — nằm NGOÀI @if -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
 
     <div
       class="lg:col-span-2 bg-surface-container-lowest rounded-xl card-shadow border border-outline-variant border-opacity-30 overflow-hidden">
       <div class="px-6 py-4 flex justify-between items-center border-b border-outline-variant border-opacity-30">
         <h3 class="font-title-sm text-title-sm">Giao dịch gần đây</h3>
-        <button class="text-primary font-body-sm font-semibold hover:underline">Xem tất cả</button>
+        <button routerLink="/admin/hoa-don" class="text-primary font-body-sm font-semibold hover:underline">Xem tất cả</button>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left">

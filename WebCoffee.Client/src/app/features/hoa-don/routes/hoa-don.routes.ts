@@ -6,7 +6,7 @@ export const HOA_DON_ROUTES: Routes = [
     loadComponent: () => import('../pages/hoa-don-list/hoa-don-list.component').then(m => m.HoaDonListComponent)
   },
   {
-    path: 'detail',
+    path: 'detail/:id',
     loadComponent: () => import('../pages/hoa-don-detail/hoa-don-detail.component').then(m => m.HoaDonDetailComponent)
   },
   {

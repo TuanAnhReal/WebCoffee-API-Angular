@@ -145,5 +145,75 @@ namespace WebCoffee.BackendServer.Services.Auth
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> DangKyTaiKhoanAsync(DangKyRequest request)
+        {
+            var checkTrungTen = await _context.TaiKhoans.AnyAsync(x => x.TenDangNhap == request.TenDangNhap);
+            if (checkTrungTen) return false;
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    string maNhanVienLienKet = request.MaNV;
+                    if (string.IsNullOrEmpty(maNhanVienLienKet))
+                    {
+                        maNhanVienLienKet = "NV" + DateTime.Now.ToString("yyMMdd") + new Random().Next(10, 99);
+
+                        var chuoiTen = request.HoVaTen.Trim().Split(' ');
+                        string tenNV = chuoiTen.Last();
+                        string hoNV = string.Join(" ", chuoiTen.Take(chuoiTen.Length - 1));
+                        if (string.IsNullOrEmpty(hoNV)) hoNV = "Nguyễn";
+
+                        string maLoaiNhanVienMacDinh = "LNV02";
+                        if (request.MaPQ == "PQ_ADMIN" || request.MaPQ == "Quản trị viên")
+                        {
+                            maLoaiNhanVienMacDinh = "LNV01";
+                        }
+
+                        var nhanVienMoi = new NhanVien
+                        {
+                            MaNV = maNhanVienLienKet,
+                            HoNV = hoNV,
+                            TenNV = tenNV,
+                            TrangThaiNV = "Đang làm",
+
+                            MaLoaiNV = maLoaiNhanVienMacDinh
+                        };
+
+                        _context.NhanViens.Add(nhanVienMoi);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        var kiemTraNhanVien = await _context.NhanViens.AnyAsync(x => x.MaNV == maNhanVienLienKet);
+                        if (!kiemTraNhanVien) throw new Exception("Mã nhân viên chỉ định không tồn tại.");
+
+                        var kiemTraTaiKhoan = await _context.TaiKhoans.AnyAsync(x => x.MaNV == maNhanVienLienKet);
+                        if (kiemTraTaiKhoan) throw new Exception("Nhân viên này đã có tài khoản.");
+                    }
+
+                    var taiKhoanMoi = new TaiKhoan
+                    {
+                        TenDangNhap = request.TenDangNhap,
+                        MatKhau = BCrypt.Net.BCrypt.HashPassword(request.MatKhau),
+                        MaNV = maNhanVienLienKet,
+                        MaPQ = request.MaPQ,
+                        TrangThaiTK = "Hoạt động"
+                    };
+
+                    _context.TaiKhoans.Add(taiKhoanMoi);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
     }
 }

@@ -48,6 +48,31 @@ namespace WebCoffee.BackendServer.Controllers
             return Ok(ApiResponse.SuccessResult("Cập nhật hóa đơn thành công"));
         }
 
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(string id, [FromBody] string newStatus)
+        {
+            var result = await _hoaDonService.UpdateStatusAsync(id, newStatus);
+            if (!result)
+            {
+                return BadRequest(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+            }
+
+            return Ok(new { success = true, message = "Cập nhật trạng thái thành công!" });
+        }
+
+        [HttpPut("{soHd}/complete-kitchen")]
+        public async Task<IActionResult> CompleteKitchenOrder(string soHd, [FromBody] KitchenUpdateDto dto)
+        {
+            var isSuccess = await _hoaDonService.CompleteKitchenOrderAsync(soHd, dto);
+            if (!isSuccess)
+            {
+                return BadRequest(ApiResponse.ErrorResult("Cập nhật trạng thái hoàn thành pha chế thất bại!", 400));
+            }
+
+            return Ok(ApiResponse.SuccessResult("Xác nhận hoàn thành pha chế đơn hàng thành công!"));
+        }
+
+
         [HttpDelete("{soHd}")]
         public async Task<IActionResult> Delete(string soHd)
         {
