@@ -54,13 +54,18 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "https://angularwebcoffeeclientvercel.vercel.app",
+            "http://localhost:4200"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
-var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new Exception("JWT Key missing");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -130,7 +135,7 @@ app.UseMiddleware<WebCoffee.BackendServer.Middlewares.ExceptionMiddleware>();
 app.UseSerilogRequestLogging();
 
 // Swagger
-if (app.Environment.IsDevelopment())
+if (true)
 {
     app.UseSwagger();
 
