@@ -8,7 +8,7 @@ namespace WebCoffee.BackendServer.Validators.SanPhams
         public SanPhamUpdateValidator()
         {
             RuleFor(x => x.TenSp).NotEmpty().WithMessage("Tên sản phẩm không được để trống");
-            RuleFor(x => x.GiaSp).GreaterThan(0).WithMessage("Giá sản phẩm phải lớn hơn 0");
+            RuleFor(x => x.DonGia).GreaterThan(0).WithMessage("Giá sản phẩm phải lớn hơn 0");
             RuleFor(x => x.MaLoaiSp).NotEmpty().WithMessage("Vui lòng chọn loại sản phẩm");
         }
     }

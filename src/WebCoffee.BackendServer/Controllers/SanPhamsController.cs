@@ -22,7 +22,10 @@ namespace WebCoffee.BackendServer.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _sanPhamService.GetAllAsync();
-            return Ok(ApiResponse<List<SanPhamVm>>.SuccessResult(result, "Lấy danh sách sản phẩm thành công"));
+
+            return Ok(
+                ApiResponse<List<SanPhamVm>>
+                .SuccessResult(result, "Lấy danh sách sản phẩm thành công"));
         }
 
         [HttpGet("{maSp}")]
@@ -31,40 +34,63 @@ namespace WebCoffee.BackendServer.Controllers
             var result = await _sanPhamService.GetByIdAsync(maSp);
 
             if (result == null)
-                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy sản phẩm này.", 404));
+            {
+                return NotFound(
+                    ApiResponse<object>
+                    .ErrorResult("Không tìm thấy sản phẩm.", 404));
+            }
 
-            return Ok(ApiResponse<SanPhamVm>.SuccessResult(result, "Lấy thông tin sản phẩm thành công"));
+            return Ok(
+                ApiResponse<SanPhamVm>
+                .SuccessResult(result, "Lấy thông tin sản phẩm thành công"));
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create([FromForm] SanPhamCreateRequest request)
         {
             var result = await _sanPhamService.CreateAsync(request);
 
-            return Created(string.Empty, ApiResponse<SanPhamVm>.SuccessResult(result, "Thêm sản phẩm thành công", 201));
+            return CreatedAtAction(
+                nameof(GetById),
+                new { maSp = result.MaSp },
+                ApiResponse<SanPhamVm>
+                .SuccessResult(result, "Thêm sản phẩm thành công", 201));
         }
 
         [HttpPut("{maSp}")]
-        public async Task<IActionResult> Update(string maSp, [FromForm] SanPhamUpdateRequest request)
+        public async Task<IActionResult> Update(
+            string maSp,
+            [FromForm] SanPhamUpdateRequest request)
         {
-            var isSuccess = await _sanPhamService.UpdateAsync(maSp, request);
+            var success = await _sanPhamService.UpdateAsync(maSp, request);
 
-            if (!isSuccess)
-                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy sản phẩm để cập nhật.", 404));
+            if (!success)
+            {
+                return NotFound(
+                    ApiResponse<object>
+                    .ErrorResult("Không tìm thấy sản phẩm để cập nhật.", 404));
+            }
 
-            return Ok(ApiResponse<object>.SuccessResult(null, "Cập nhật sản phẩm thành công"));
+            return Ok(
+                ApiResponse<object>
+                .SuccessResult(null, "Cập nhật sản phẩm thành công"));
         }
 
         [HttpDelete("{maSp}")]
         public async Task<IActionResult> Delete(string maSp)
         {
-            var isSuccess = await _sanPhamService.DeleteAsync(maSp);
+            var success = await _sanPhamService.DeleteAsync(maSp);
 
-            if (!isSuccess)
-                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy sản phẩm để xóa.", 404));
+            if (!success)
+            {
+                return NotFound(
+                    ApiResponse<object>
+                    .ErrorResult("Không tìm thấy sản phẩm để xóa.", 404));
+            }
 
-            return Ok(ApiResponse<object>.SuccessResult(null, "Xóa sản phẩm thành công"));
+            return Ok(
+                ApiResponse<object>
+                .SuccessResult(null, "Xóa sản phẩm thành công"));
         }
     }
 }

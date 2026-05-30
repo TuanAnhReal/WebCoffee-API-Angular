@@ -63,8 +63,24 @@ namespace WebCoffee.BackendServer.Data
                 .Property(c => c.GiaVon)
                 .HasColumnType("decimal(18, 2)");
 
-            modelBuilder.Entity<SanPham_KhuyenMai>()
-                .HasKey(sk => new { sk.MaSP, sk.MaKM });
+            modelBuilder.Entity<SanPham_KhuyenMai>(entity =>
+            {
+                entity.HasKey(x => new
+                {
+                    x.MaSP,
+                    x.MaKM
+                });
+
+                entity.HasOne(x => x.SanPham)
+                    .WithMany(x => x.SanPham_KhuyenMais)
+                    .HasForeignKey(x => x.MaSP)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.KhuyenMai)
+                    .WithMany(x => x.SanPham_KhuyenMais)
+                    .HasForeignKey(x => x.MaKM)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity<HoaDon>()
                 .HasOne(h => h.NhanVienPhucVu)

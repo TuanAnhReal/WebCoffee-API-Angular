@@ -15,6 +15,7 @@ using WebCoffee.BackendServer.Services.PhanQuyens;
 using WebCoffee.BackendServer.Services.SanPhams;
 using WebCoffee.BackendServer.Services.Storage;
 using WebCoffee.BackendServer.Services.TaiKhoans;
+using WebCoffee.BackendServer.Services.KhuyenMais;
 
 namespace WebCoffee.BackendServer.Extensions
 {
@@ -40,6 +41,7 @@ namespace WebCoffee.BackendServer.Extensions
             services.AddTransient<IHoaDonService, HoaDonService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IKhuVucBanService, KhuVucBanService>();
+            services.AddScoped<IKhuyenMaiService, KhuyenMaiService>();
 
             services.Configure<CloudinarySettings>(
                 configuration.GetSection("CloudinarySettings"));
