@@ -3,10 +3,10 @@
     public class HoaDonVm
     {
         public string SoHD { get; set; }
-        public string MaKH { get; set; }
-        public string SoBan { get; set; }
-        public string MaNV_PV { get; set; }
-        public string MaNV_PC { get; set; }
+        public string? MaKH { get; set; }
+        public string? SoBan { get; set; }
+        public string? MaNV_PV { get; set; }
+        public string? MaNV_PC { get; set; }
         public DateTime TGVao { get; set; }
         public DateTime? TGRa { get; set; }
         public decimal GiamGiaHD { get; set; }
