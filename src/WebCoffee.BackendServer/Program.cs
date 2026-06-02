@@ -55,7 +55,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular", policy =>
     {
         policy.WithOrigins(
-            "https://angularwebcoffeeclientvercel.vercel.app",
+            "https://coffeeaka.vercel.app",
             "http://localhost:4200"
         )
         .AllowAnyHeader()

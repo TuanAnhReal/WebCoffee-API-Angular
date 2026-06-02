@@ -14,7 +14,7 @@
         public decimal ThueVAT { get; set; }
         public decimal TongTien { get; set; }
         public string TrangThaiHD { get; set; }
-        public string GhiChuHD { get; set; }
+        public string? GhiChuHD { get; set; }
         
         public List<CTHDVm> ChiTietHoaDons { get; set; } = new List<CTHDVm>();
     }

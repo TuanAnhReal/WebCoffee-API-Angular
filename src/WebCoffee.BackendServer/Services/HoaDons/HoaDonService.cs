@@ -193,10 +193,6 @@ namespace WebCoffee.BackendServer.Services.HoaDons
             return result > 0;
         }
 
-        // =========================================================
-        // HELPER METHODS TÍNH TOÁN KHUYẾN MÃI
-        // =========================================================
-
         private KhuyenMai? GetActivePromotion(SanPham sanPham)
         {
             if (sanPham.SanPham_KhuyenMais == null || !sanPham.SanPham_KhuyenMais.Any())
