@@ -127,19 +127,28 @@ namespace WebCoffee.BackendServer.Services.Dashboard
 
             #region KHUYẾN MÃI
 
-            var activePromotions = await _context.KhuyenMais
-                .AsNoTracking()
-                .CountAsync(x =>
-                    x.NgayBD <= DateTime.Now &&
-                    x.NgayKT >= DateTime.Now);
+            var activePromotions = await _context.KhuyenMais.AsNoTracking()
+                .CountAsync(x => x.NgayBD <= DateTime.Now && x.NgayKT >= DateTime.Now);
 
-            var promotionProducts = await _context.SanPham_KhuyenMais
-                .AsNoTracking()
-                .CountAsync();
+            var promotionProducts = await _context.SanPham_KhuyenMais.AsNoTracking().CountAsync();
 
-            decimal discountAmountToday = 0;
-            decimal promotionRevenueToday = 0;
+            var discountAmountToday = await (
+                from hd in _context.HoaDons.AsNoTracking()
+                join ct in _context.CTHDs.AsNoTracking() on hd.SoHD equals ct.SoHD
+                where hd.TrangThaiHD == "Đã thanh toán" && hd.TGVao.HasValue && hd.TGVao.Value.Date == today
+                select (decimal?)ct.GiamGia
+            ).SumAsync() ?? 0;
 
+            var promotionRevenueToday = await (
+                from hd in _context.HoaDons.AsNoTracking()
+                join ct in _context.CTHDs.AsNoTracking() on hd.SoHD equals ct.SoHD
+                join spkm in _context.SanPham_KhuyenMais.AsNoTracking() on ct.MaSP equals spkm.MaSP
+                join km in _context.KhuyenMais.AsNoTracking() on spkm.MaKM equals km.MaKM
+                where hd.TrangThaiHD == "Đã thanh toán"
+                      && hd.TGVao.HasValue && hd.TGVao.Value.Date == today
+                      && km.NgayBD <= DateTime.Now && km.NgayKT >= DateTime.Now
+                select (decimal?)ct.ThanhTien
+            ).SumAsync() ?? 0;
             #endregion
 
             #region TOP PRODUCTS
@@ -164,17 +173,46 @@ namespace WebCoffee.BackendServer.Services.Dashboard
 
             #region TOP PROMOTIONS
 
-            var topPromotions = await _context.KhuyenMais
-                .AsNoTracking()
-                .Select(x => new TopPromotionVm
+            var topPromotions = await (
+                from km in _context.KhuyenMais.AsNoTracking()
+                join spkm in _context.SanPham_KhuyenMais.AsNoTracking() on km.MaKM equals spkm.MaKM
+                join ct in _context.CTHDs.AsNoTracking() on spkm.MaSP equals ct.MaSP
+                join hd in _context.HoaDons.AsNoTracking() on ct.SoHD equals hd.SoHD
+                where hd.TrangThaiHD == "Đã thanh toán"
+                group new { ct, hd } by new { km.MaKM, km.TenKM } into g
+                select new TopPromotionVm
                 {
-                    PromoName = x.TenKM,
-                    OrdersCount = 0,
-                    Revenue = 0
-                })
-                .Take(5)
-                .ToListAsync();
+                    PromoName = g.Key.TenKM,
+                    OrdersCount = g.Select(x => x.hd.SoHD).Distinct().Count(),
+                    Revenue = g.Sum(x => (decimal?)x.ct.ThanhTien) ?? 0
+                }
+            )
+            .OrderByDescending(x => x.Revenue)
+            .Take(5)
+            .ToListAsync();
+            #endregion
 
+            #region ALERTS
+            var alerts = new List<string>();
+
+            // Hóa đơn chờ pha chế > 15 phút
+            var pendingOrders = await _context.HoaDons.AsNoTracking()
+                .CountAsync(x => x.TrangThaiHD == "Chờ pha chế" && x.TGVao < DateTime.Now.AddMinutes(-15));
+            if (pendingOrders > 0) alerts.Add($"Có {pendingOrders} hóa đơn chờ pha chế > 15 phút");
+
+            // Bàn đang phục vụ > 2 giờ
+            // Lưu ý: Nếu DB của bạn lưu TGBatDauPhucVu thì dùng nó, ở đây tôi tạm dùng TGVao của hóa đơn chưa thanh toán gần nhất của bàn
+            var longServingTables = await (
+                from hd in _context.HoaDons.AsNoTracking()
+                where hd.TrangThaiHD == "Chưa thanh toán" && hd.SoBan != null && hd.TGVao < DateTime.Now.AddHours(-2)
+                select hd.SoBan
+            ).Distinct().CountAsync();
+            if (longServingTables > 0) alerts.Add($"Có {longServingTables} bàn phục vụ > 2 giờ");
+
+            // KM sắp hết hạn trong 24h
+            var expiringPromos = await _context.KhuyenMais.AsNoTracking()
+                .CountAsync(x => x.NgayKT <= DateTime.Now.AddHours(24) && x.NgayKT >= DateTime.Now);
+            if (expiringPromos > 0) alerts.Add($"Có {expiringPromos} khuyến mãi sắp hết hạn trong 24h");
             #endregion
 
             #region RECENT INVOICES
@@ -242,7 +280,8 @@ namespace WebCoffee.BackendServer.Services.Dashboard
                 TableStatuses = tableStatuses,
                 RecentInvoices = recentInvoices,
 
-                RevenueChart = revenueChart
+                RevenueChart = revenueChart,
+                Alerts = alerts
             };
         }
     }

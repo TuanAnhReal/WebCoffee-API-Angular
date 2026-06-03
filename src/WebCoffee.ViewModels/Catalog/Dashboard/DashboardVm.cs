@@ -33,6 +33,7 @@
 
         // Chart
         public List<decimal> RevenueChart { get; set; } = [];
+        public List<string> Alerts { get; set; } = new();
     }
 
     public class TopProductVm
