@@ -2,26 +2,64 @@
 {
     public class DashboardVm
     {
-        public decimal DoanhThuHomNay { get; set; }
-        public double PhanTramDoanhThu { get; set; }
+        // KPI Chính
+        public decimal RevenueToday { get; set; }
+        public double RevenueGrowth { get; set; }
 
-        public int TongĐonHangHomNay { get; set; }
-        public double PhanTramĐonHang { get; set; }
-        public int KhachHangMoiHomNay { get; set; }
-        public double PhanTramKhachHang { get; set; }
+        public int InvoiceToday { get; set; }
+        public double InvoiceGrowth { get; set; }
 
-        public decimal LoiNhuanHomNay { get; set; }
-        public double PhanTramLoiNhuan { get; set; }
+        public int CustomerToday { get; set; }
+        public double CustomerGrowth { get; set; }
 
-        public List<GiaoDichGanDayVm> GiaoDichGanDay { get; set; } = new List<GiaoDichGanDayVm>();
+        public decimal ProfitToday { get; set; }
+        public double ProfitGrowth { get; set; }
+
+        // KPI Bàn
+        public int ActiveTables { get; set; }
+        public int TotalTables { get; set; }
+
+        // KPI Khuyến mãi
+        public int ActivePromotions { get; set; }
+        public int PromotionProducts { get; set; }
+        public decimal DiscountAmountToday { get; set; }
+        public decimal PromotionRevenueToday { get; set; }
+
+        // Dashboard Lists
+        public List<TopProductVm> TopProducts { get; set; } = [];
+        public List<TopPromotionVm> TopPromotions { get; set; } = [];
+        public List<TableStatusVm> TableStatuses { get; set; } = [];
+        public List<RecentInvoiceVm> RecentInvoices { get; set; } = [];
+
+        // Chart
+        public List<decimal> RevenueChart { get; set; } = [];
     }
 
-    public class GiaoDichGanDayVm
+    public class TopProductVm
     {
-        public string SoHD { get; set; }
-        public string TenKhachHang { get; set; }
-        public DateTime ThoiGian { get; set; }
-        public decimal TongTien { get; set; }
-        public string TrangThai { get; set; }
+        public string ProductName { get; set; } = "";
+        public int Quantity { get; set; }
+        public decimal Revenue { get; set; }
+    }
+
+    public class TopPromotionVm
+    {
+        public string PromoName { get; set; } = "";
+        public int OrdersCount { get; set; }
+        public decimal Revenue { get; set; }
+    }
+
+    public class TableStatusVm
+    {
+        public string TableName { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string ServingTime { get; set; } = "";
+    }
+
+    public class RecentInvoiceVm
+    {
+        public string InvoiceId { get; set; } = "";
+        public decimal Amount { get; set; }
+        public string Status { get; set; } = "";
     }
 }
