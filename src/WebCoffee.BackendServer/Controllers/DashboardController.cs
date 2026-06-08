@@ -14,10 +14,12 @@ public class DashboardController : ControllerBase
         _dashboardService = dashboardService;
     }
 
-    [HttpGet("summary")]
-    public async Task<IActionResult> GetSummary()
-    {
-        var data = await _dashboardService.GetDashboardSummaryAsync();
-        return Ok(data);
-    }
+    [HttpGet("kpi")]
+    public async Task<IActionResult> GetKpi() => Ok(await _dashboardService.GetKpiAsync());
+
+    [HttpGet("lists")]
+    public async Task<IActionResult> GetLists() => Ok(await _dashboardService.GetListsAsync());
+
+    [HttpGet("chart")]
+    public async Task<IActionResult> GetChart() => Ok(await _dashboardService.GetChartAsync());
 }

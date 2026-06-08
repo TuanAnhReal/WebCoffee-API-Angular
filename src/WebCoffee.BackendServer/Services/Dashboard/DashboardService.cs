@@ -13,7 +13,7 @@ namespace WebCoffee.BackendServer.Services.Dashboard
             _context = context;
         }
 
-        public async Task<DashboardVm> GetDashboardSummaryAsync()
+        public async Task<DashboardKpiVm> GetKpiAsync()
         {
             var today = DateTime.Today;
             var yesterday = today.AddDays(-1);
@@ -101,28 +101,27 @@ namespace WebCoffee.BackendServer.Services.Dashboard
 
             #endregion
 
-            #region BÀN
+            #region ALERTS
+            var alerts = new List<string>();
 
-            var totalTables = await _context.Bans
-                .AsNoTracking()
-                .CountAsync();
+            // Hóa đơn chờ pha chế > 15 phút
+            var pendingOrders = await _context.HoaDons.AsNoTracking()
+                .CountAsync(x => x.TrangThaiHD == "Chờ pha chế" && x.TGVao < DateTime.Now.AddMinutes(-15));
+            if (pendingOrders > 0) alerts.Add($"Có {pendingOrders} hóa đơn chờ pha chế > 15 phút");
 
-            var activeTables = await _context.Bans
-                .AsNoTracking()
-                .CountAsync(x => x.TrangThaiBan != "Trống");
+            // Bàn đang phục vụ > 2 giờ
+            // Lưu ý: Nếu DB của bạn lưu TGBatDauPhucVu thì dùng nó, ở đây tôi tạm dùng TGVao của hóa đơn chưa thanh toán gần nhất của bàn
+            var longServingTables = await (
+                from hd in _context.HoaDons.AsNoTracking()
+                where hd.TrangThaiHD == "Chưa thanh toán" && hd.SoBan != null && hd.TGVao < DateTime.Now.AddHours(-2)
+                select hd.SoBan
+            ).Distinct().CountAsync();
+            if (longServingTables > 0) alerts.Add($"Có {longServingTables} bàn phục vụ > 2 giờ");
 
-            var tableStatuses = await _context.Bans
-                .AsNoTracking()
-                .Where(x => x.TrangThaiBan != "Trống")
-                .Take(10)
-                .Select(x => new TableStatusVm
-                {
-                    TableName = x.TenBan,
-                    Status = x.TrangThaiBan ?? "",
-                    ServingTime = "--"
-                })
-                .ToListAsync();
-
+            // KM sắp hết hạn trong 24h
+            var expiringPromos = await _context.KhuyenMais.AsNoTracking()
+                .CountAsync(x => x.NgayKT <= DateTime.Now.AddHours(24) && x.NgayKT >= DateTime.Now);
+            if (expiringPromos > 0) alerts.Add($"Có {expiringPromos} khuyến mãi sắp hết hạn trong 24h");
             #endregion
 
             #region KHUYẾN MÃI
@@ -149,6 +148,54 @@ namespace WebCoffee.BackendServer.Services.Dashboard
                       && km.NgayBD <= DateTime.Now && km.NgayKT >= DateTime.Now
                 select (decimal?)ct.ThanhTien
             ).SumAsync() ?? 0;
+            #endregion
+
+            return new DashboardKpiVm
+            {
+                RevenueToday = revenueToday,
+                RevenueGrowth = Math.Round(revenueGrowth, 1),
+
+                InvoiceToday = invoiceToday,
+                InvoiceGrowth = Math.Round(invoiceGrowth, 1),
+
+                CustomerToday = customerToday,
+                CustomerGrowth = Math.Round(customerGrowth, 1),
+
+                ProfitToday = profitToday,
+                ProfitGrowth = Math.Round(profitGrowth, 1),
+                ActivePromotions = activePromotions,
+                PromotionProducts = promotionProducts,
+                DiscountAmountToday = discountAmountToday,
+                PromotionRevenueToday = promotionRevenueToday,
+            };
+
+        }
+
+        public async Task<DashboardListsVm> GetListsAsync()
+        {
+
+            #region BÀN
+
+            var totalTables = await _context.Bans
+                .AsNoTracking()
+                .CountAsync();
+
+            var activeTables = await _context.Bans
+                .AsNoTracking()
+                .CountAsync(x => x.TrangThaiBan != "Trống");
+
+            var tableStatuses = await _context.Bans
+                .AsNoTracking()
+                .Where(x => x.TrangThaiBan != "Trống")
+                .Take(10)
+                .Select(x => new TableStatusVm
+                {
+                    TableName = x.TenBan,
+                    Status = x.TrangThaiBan ?? "",
+                    ServingTime = "--"
+                })
+                .ToListAsync();
+
             #endregion
 
             #region TOP PRODUCTS
@@ -192,29 +239,6 @@ namespace WebCoffee.BackendServer.Services.Dashboard
             .ToListAsync();
             #endregion
 
-            #region ALERTS
-            var alerts = new List<string>();
-
-            // Hóa đơn chờ pha chế > 15 phút
-            var pendingOrders = await _context.HoaDons.AsNoTracking()
-                .CountAsync(x => x.TrangThaiHD == "Chờ pha chế" && x.TGVao < DateTime.Now.AddMinutes(-15));
-            if (pendingOrders > 0) alerts.Add($"Có {pendingOrders} hóa đơn chờ pha chế > 15 phút");
-
-            // Bàn đang phục vụ > 2 giờ
-            // Lưu ý: Nếu DB của bạn lưu TGBatDauPhucVu thì dùng nó, ở đây tôi tạm dùng TGVao của hóa đơn chưa thanh toán gần nhất của bàn
-            var longServingTables = await (
-                from hd in _context.HoaDons.AsNoTracking()
-                where hd.TrangThaiHD == "Chưa thanh toán" && hd.SoBan != null && hd.TGVao < DateTime.Now.AddHours(-2)
-                select hd.SoBan
-            ).Distinct().CountAsync();
-            if (longServingTables > 0) alerts.Add($"Có {longServingTables} bàn phục vụ > 2 giờ");
-
-            // KM sắp hết hạn trong 24h
-            var expiringPromos = await _context.KhuyenMais.AsNoTracking()
-                .CountAsync(x => x.NgayKT <= DateTime.Now.AddHours(24) && x.NgayKT >= DateTime.Now);
-            if (expiringPromos > 0) alerts.Add($"Có {expiringPromos} khuyến mãi sắp hết hạn trong 24h");
-            #endregion
-
             #region RECENT INVOICES
 
             var recentInvoices = await (
@@ -232,57 +256,41 @@ namespace WebCoffee.BackendServer.Services.Dashboard
 
             #endregion
 
-            #region REVENUE CHART
-
-            var revenueChart = new List<decimal>();
-
-            for (int i = 6; i >= 0; i--)
+            return new DashboardListsVm
             {
-                var day = today.AddDays(-i);
-
-                var revenue = await _context.HoaDons
-                    .AsNoTracking()
-                    .Where(x =>
-                        x.TrangThaiHD == "Đã thanh toán" &&
-                        x.TGVao.HasValue &&
-                        x.TGVao.Value.Date == day)
-                    .SumAsync(x => (decimal?)x.TongTien) ?? 0;
-
-                revenueChart.Add(revenue);
-            }
-
-            #endregion
-
-            return new DashboardVm
-            {
-                RevenueToday = revenueToday,
-                RevenueGrowth = Math.Round(revenueGrowth, 1),
-
-                InvoiceToday = invoiceToday,
-                InvoiceGrowth = Math.Round(invoiceGrowth, 1),
-
-                CustomerToday = customerToday,
-                CustomerGrowth = Math.Round(customerGrowth, 1),
-
-                ProfitToday = profitToday,
-                ProfitGrowth = Math.Round(profitGrowth, 1),
-
                 ActiveTables = activeTables,
                 TotalTables = totalTables,
 
-                ActivePromotions = activePromotions,
-                PromotionProducts = promotionProducts,
-                DiscountAmountToday = discountAmountToday,
-                PromotionRevenueToday = promotionRevenueToday,
-
                 TopProducts = topProducts,
                 TopPromotions = topPromotions,
-                TableStatuses = tableStatuses,
                 RecentInvoices = recentInvoices,
-
-                RevenueChart = revenueChart,
-                Alerts = alerts
+                TableStatuses = tableStatuses
             };
+        }
+        public async Task<List<decimal>> GetChartAsync()
+        {
+            var today = DateTime.Today;
+            var startDate = today.AddDays(-6);
+            var endDate = today.AddDays(1);
+
+            var dailyRevenues = await _context.HoaDons.AsNoTracking()
+                .Where(x => x.TrangThaiHD == "Đã thanh toán" && x.TGVao >= startDate && x.TGVao < endDate)
+                .GroupBy(x => x.TGVao.Value.Date)
+                .Select(g => new {
+                    Date = g.Key,
+                    Total = g.Sum(x => (decimal?)x.TongTien) ?? 0
+                })
+                .ToListAsync();
+
+            var revenueChart = new List<decimal>();
+            for (int i = 6; i >= 0; i--)
+            {
+                var day = today.AddDays(-i);
+                var rev = dailyRevenues.FirstOrDefault(x => x.Date == day)?.Total ?? 0;
+                revenueChart.Add(rev);
+            }
+
+            return revenueChart;
         }
     }
 }

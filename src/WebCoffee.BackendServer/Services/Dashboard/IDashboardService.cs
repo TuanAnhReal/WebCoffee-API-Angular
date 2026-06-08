@@ -6,7 +6,9 @@ namespace WebCoffee.BackendServer.Services.Dashboard
 {
     public interface IDashboardService
     {
-        Task<DashboardVm> GetDashboardSummaryAsync();
+        Task<DashboardKpiVm> GetKpiAsync();
+        Task<DashboardListsVm> GetListsAsync();
+        Task<List<decimal>> GetChartAsync();
     }
 
 }

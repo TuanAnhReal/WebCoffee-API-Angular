@@ -1,41 +1,5 @@
 ﻿namespace WebCoffee.ViewModels.Catalog.Dashboard
 {
-    public class DashboardVm
-    {
-        // KPI Chính
-        public decimal RevenueToday { get; set; }
-        public double RevenueGrowth { get; set; }
-
-        public int InvoiceToday { get; set; }
-        public double InvoiceGrowth { get; set; }
-
-        public int CustomerToday { get; set; }
-        public double CustomerGrowth { get; set; }
-
-        public decimal ProfitToday { get; set; }
-        public double ProfitGrowth { get; set; }
-
-        // KPI Bàn
-        public int ActiveTables { get; set; }
-        public int TotalTables { get; set; }
-
-        // KPI Khuyến mãi
-        public int ActivePromotions { get; set; }
-        public int PromotionProducts { get; set; }
-        public decimal DiscountAmountToday { get; set; }
-        public decimal PromotionRevenueToday { get; set; }
-
-        // Dashboard Lists
-        public List<TopProductVm> TopProducts { get; set; } = [];
-        public List<TopPromotionVm> TopPromotions { get; set; } = [];
-        public List<TableStatusVm> TableStatuses { get; set; } = [];
-        public List<RecentInvoiceVm> RecentInvoices { get; set; } = [];
-
-        // Chart
-        public List<decimal> RevenueChart { get; set; } = [];
-        public List<string> Alerts { get; set; } = new();
-    }
-
     public class TopProductVm
     {
         public string ProductName { get; set; } = "";
