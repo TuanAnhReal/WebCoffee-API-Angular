@@ -1,4 +1,4 @@
-﻿namespace WebCoffee.ViewModels.Catalog.Dashboard
+namespace WebCoffee.ViewModels.Catalog.Dashboard
 {
     public class TopProductVm
     {
@@ -26,5 +26,16 @@
         public string InvoiceId { get; set; } = "";
         public decimal Amount { get; set; }
         public string Status { get; set; } = "";
+    }
+
+    /// <summary>
+    /// Gộp toàn bộ dữ liệu Dashboard (KPI + Chart + Lists) vào 1 response.
+    /// Frontend chỉ cần 1 HTTP call thay vì 3.
+    /// </summary>
+    public class DashboardSummaryVm
+    {
+        public DashboardKpiVm Kpi { get; set; } = new();
+        public List<decimal> RevenueChart { get; set; } = [];
+        public DashboardListsVm Lists { get; set; } = new();
     }
 }
